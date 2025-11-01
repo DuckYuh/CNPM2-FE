@@ -1,16 +1,55 @@
-# React + Vite
+# E-Commerce Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Introduction
+E-Commerce Web is a modern e-commerce platform built using ReactJS for the frontend and ExpressJS for the backend. It utilizes TailwindCSS and Shadcn/UI for styling, along with MongoDB as the database. The platform supports various features, including real-time notification and communication, order tracking, and payment integration.
 
-Currently, two official plugins are available:
+## Technologies Used
+- **Frontend**: ReactJS, Vite, TailwindCSS, Shadcn/UI, OriginUI
+- **Backend**: ExpressJS
+- **Database**: MongoDB
+- **Payment Integration**: Stripe, Momo, VNPAY
+- **Real-Time Communication**: WebSocket
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
+- Searching with filtering feature.
+- Manage user profiles and orders. Support uploading images.
+- Seller role: Products, orders, reviews, and inventory management.
+- Complete checkout and transaction process.
+- Real-time chat between buyers and sellers
+- Order tracking and notifications.
+- Third-party API integration: Stripe/Momo, GHN.
+- JWT Tokens for authentication, support Google Login and registering with verification link throguh email.
 
-## React Compiler
+## System Requirements
+- Node.js version 14 or later
+- MongoDB version 4.4 or later
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Installation
+Follow these steps to set up the project on your local machine:
 
-## Expanding the ESLint configuration
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/levionthemic/e-commerce-web.git
+   ```
+2. **Install dependencies**:
+   ```bash
+   cd e-commerce-web
+   yarn
+   ```
+3. **Set up environment variables**:
+   - Create a `.env` file and configure necessary variables like MongoDB connection string, Stripe/Momo API keys, etc.
+4. **Run the application**:
+   ```bash
+   yarn dev
+   ```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Usage
+- Open `http://localhost:5173` in your browser.
+- Register a new account or log in.
+- Browse products, add them to the cart, and proceed with checkout.
+- Sample account for buyer: liem.ho2211835@hcmut.edu.vn - demo1234
+- Sample account for seller: liem.levicoding834124@gmail.com - demo1234
+
+## Contact
+For any inquiries or feedback, feel free to contact us at: ecommerceplatform.pp.204@gmail.com.
+
