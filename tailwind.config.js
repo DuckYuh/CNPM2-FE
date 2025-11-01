@@ -65,7 +65,7 @@ export default {
           500: '#CEACD1',
         },
         mainBg: {
-          500: '#E6EDF5'
+          500: '#ffffffff'
         },
         sidebar: {
           DEFAULT: 'hsl(var(--sidebar-background))',
