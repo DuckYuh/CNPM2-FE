@@ -93,9 +93,6 @@
   }
 }
 
-.levi-menu-item {
-  @apply cursor-pointer relative after:lg:absolute after:lg:bottom-0 after:lg:left-0 after:lg:bg-mainColor1-100 after:lg:h-0.5 after:lg:w-0 hover:after:lg:w-full after:lg:transition-all after:lg:ease-in-out after:lg:duration-300;
-}
 :root {
   --toastify-color-success: #155724;
   --toastify-color-warning: #f1c40f;
