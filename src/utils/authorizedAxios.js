@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { toast } from 'sonner'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
 
@@ -24,6 +25,9 @@ authorizedAxiosInstance.interceptors.response.use(
     return response
   },
   (error) => {
+    toast.error(
+      error.message || error.response?.data?.message || 'An error occurred'
+    )
     return Promise.reject(error)
   }
 )

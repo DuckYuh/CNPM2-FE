@@ -20,6 +20,7 @@ export default function CustomerListPage() {
   const [totalCustomers, setTotalCustomers] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [countUpdate, setCountUpdate] = useState(0)
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value)
@@ -39,7 +40,7 @@ export default function CustomerListPage() {
       .finally(() => {
         setLoading(false)
       })
-  }, [currentPage])
+  }, [currentPage, countUpdate])
 
   const handleSearch = async (event) => {
     event.preventDefault()
@@ -112,7 +113,7 @@ export default function CustomerListPage() {
       </div>
 
       {/* Search Input */}
-      <form onSubmit={handleSearch} className='relative w-[80%] mb-2'>
+      <form onSubmit={handleSearch} className='relative w-[40%] mb-2'>
         <Input
           className='peer ps-9 pe-9 w-full placeholder:text-sm placeholder:text-mainColor1-100 rounded-lg border-mainColor1-800 text-mainColor1-600 hover:border-[2px] focus:border-[2px] flex-1 bg-white'
           placeholder='Search customers...'
@@ -154,8 +155,9 @@ export default function CustomerListPage() {
                 key={customer.id}
                 customer={customer}
                 onViewDetails={() => {}}
-                onEdit={() => {}}
                 onDelete={() => {}}
+                countUpdate={countUpdate}
+                setCountUpdate={setCountUpdate}
               />
             ))}
           </div>
