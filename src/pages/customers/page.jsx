@@ -2,9 +2,15 @@ import { useState, useEffect, useCallback } from 'react'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import CustomerCard from '~/components/customers/CustomerCard'
-import { Filter, Plus, ChevronLeft, ChevronRight, Search, SearchIcon, ArrowRightIcon } from 'lucide-react'
+import {
+  Filter,
+  Plus,
+  ChevronLeft,
+  ChevronRight,
+  SearchIcon,
+  ArrowRightIcon
+} from 'lucide-react'
 import { customerApi } from '~/apis/customerApi'
-import { createSearchParams } from 'react-router-dom'
 
 export default function CustomerListPage() {
   const [activeTab, setActiveTab] = useState('List')
@@ -12,67 +18,79 @@ export default function CustomerListPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [customers, setCustomers] = useState([])
   const [totalCustomers, setTotalCustomers] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
+  const [loading, setLoading] = useState(false)
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value)
   }
 
-  const pageSize = 20
-  const totalPages = Math.ceil(totalCustomers / pageSize)
+  const pageSize = 10
 
   useEffect(() => {
-    customerApi.getAll().then((response) => {
-      setCustomers(response.data)
-      setTotalCustomers(response.totalItems)
-    })
-  }, [])
+    setLoading(true)
+    customerApi
+      .getAll(currentPage)
+      .then((response) => {
+        setCustomers(response.data)
+        setTotalCustomers(response.totalItems)
+        setTotalPages(response.totalPages)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [currentPage])
 
   const handleSearch = async (event) => {
     event.preventDefault()
-    customerApi.getAll(currentPage, pageSize, searchTerm).then((response) => {
-      setCustomers(response.data)
-      setTotalCustomers(response.totalItems)
-    })
+    setLoading(true)
+    customerApi
+      .getAll(currentPage, pageSize, searchTerm)
+      .then((response) => {
+        setCustomers(response.data)
+        setTotalCustomers(response.totalItems)
+        setTotalPages(response.totalPages)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
-  console.log(searchTerm)
-
   return (
-    <div className='p-6 bg-background min-h-screen'>
+    <div className='min-h-screen'>
       {/* Header */}
       <div className='flex items-center justify-between mb-6'>
         <div className='flex items-center gap-4'>
           <h1 className='text-2xl font-semibold text-foreground'>
             Customers ({totalCustomers})
           </h1>
-
-          {/* Tab Navigation */}
-          <div className='flex bg-muted rounded-lg p-1'>
-            <Button
-              variant={activeTab === 'List' ? 'default' : 'ghost'}
-              size='sm'
-              onClick={() => setActiveTab('List')}
-              className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-                activeTab === 'List'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              List
-            </Button>
-            <Button
-              variant={activeTab === 'Activity' ? 'default' : 'ghost'}
-              size='sm'
-              onClick={() => setActiveTab('Activity')}
-              className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-                activeTab === 'Activity'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              Activity
-            </Button>
-          </div>
+        </div>
+        {/* Tab Navigation */}
+        <div className='grid grid-cols-2 bg-gray-200 rounded-full p-1'>
+          <Button
+            variant={activeTab === 'List' ? 'default' : 'ghost'}
+            size='sm'
+            onClick={() => setActiveTab('List')}
+            className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+              activeTab === 'List'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            List
+          </Button>
+          <Button
+            variant={activeTab === 'Activity' ? 'default' : 'ghost'}
+            size='sm'
+            onClick={() => setActiveTab('Activity')}
+            className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+              activeTab === 'Activity'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            Activity
+          </Button>
         </div>
 
         <div className='flex items-center gap-3'>
@@ -94,10 +112,10 @@ export default function CustomerListPage() {
       </div>
 
       {/* Search Input */}
-      <form onSubmit={handleSearch} className='relative w-[80%] mx-auto'>
+      <form onSubmit={handleSearch} className='relative w-[80%] mb-2'>
         <Input
-          className='peer ps-9 pe-9 w-full placeholder:text-sm placeholder:text-mainColor1-100 rounded-full border-mainColor1-800 text-mainColor1-600 hover:border-[2px] focus:border-[2px] flex-1'
-          placeholder='Bạn cần tìm gì?'
+          className='peer ps-9 pe-9 w-full placeholder:text-sm placeholder:text-mainColor1-100 rounded-lg border-mainColor1-800 text-mainColor1-600 hover:border-[2px] focus:border-[2px] flex-1 bg-white'
+          placeholder='Search customers...'
           onChange={handleInputChange}
         />
         <div className='text-mainColor1-600/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50'>
@@ -125,17 +143,23 @@ export default function CustomerListPage() {
         </div>
 
         {/* Customer Rows */}
-        <div className='divide-y'>
-          {customers?.map((customer) => (
-            <CustomerCard
-              key={customer.id}
-              customer={customer}
-              onViewDetails={() => {}}
-              onEdit={() => {}}
-              onDelete={() => {}}
-            />
-          ))}
-        </div>
+        {loading ? (
+          <div className='w-full flex items-center justify-center h-96 text-muted-foreground'>
+            Loading...
+          </div>
+        ) : (
+          <div className='divide-y'>
+            {customers?.map((customer) => (
+              <CustomerCard
+                key={customer.id}
+                customer={customer}
+                onViewDetails={() => {}}
+                onEdit={() => {}}
+                onDelete={() => {}}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Empty State */}
         {customers?.length === 0 && (

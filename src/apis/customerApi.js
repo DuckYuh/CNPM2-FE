@@ -4,7 +4,7 @@ import authorizedAxiosInstance from '~/utils/authorizedAxios'
 // Customer APIs
 export const customerApi = {
   // Get all customers with pagination and search
-  getAll: async (page = 0, size = 20, keyword = '') => {
+  getAll: async (page = 0, size = 10, keyword = '') => {
     try {
       const params = new URLSearchParams({
         page: page.toString(),
