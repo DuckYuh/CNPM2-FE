@@ -5,24 +5,19 @@ import authorizedAxiosInstance from '~/utils/authorizedAxios'
 export const customerApi = {
   // Get all customers with pagination and search
   getAll: async (page = 0, size = 10, keyword = '') => {
-    try {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        size: size.toString()
-      })
+    const params = new URLSearchParams({
+      page: page.toString(),
+      size: size.toString()
+    })
 
-      if (keyword) {
-        params.append('keyword', keyword)
-      }
-
-      const response = await authorizedAxiosInstance.get(
-        `/customers/all?${params}`
-      )
-      return response.data
-    } catch (error) {
-      console.error('Error fetching customers:', error)
-      throw error
+    if (keyword) {
+      params.append('keyword', keyword)
     }
+
+    const response = await authorizedAxiosInstance.get(
+      `/customers/all?${params}`
+    )
+    return response.data
   },
 
   // Get customer by ID
@@ -52,27 +47,17 @@ export const customerApi = {
 
   // Update customer
   update: async (id, customerData) => {
-    try {
-      const response = await authorizedAxiosInstance.put(
-        `/customers/${id}`,
-        customerData
-      )
-      return response.data
-    } catch (error) {
-      console.error('Error updating customer:', error)
-      throw error
-    }
+    const response = await authorizedAxiosInstance.put(
+      `/customers/${id}`,
+      customerData
+    )
+    return response.data
   },
 
   // Delete customer
   delete: async (id) => {
-    try {
-      const response = await authorizedAxiosInstance.delete(`/customers/${id}`)
-      return response.data
-    } catch (error) {
-      console.error('Error deleting customer:', error)
-      throw error
-    }
+    const response = await authorizedAxiosInstance.delete(`/customers/${id}`)
+    return response.data
   }
 }
 

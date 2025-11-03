@@ -7,6 +7,9 @@ import {
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import { MoreHorizontal } from 'lucide-react'
+import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
+import EditCustomerForm from './EditCustomerForm'
+import { useState } from 'react'
 
 const getInitials = (name) => {
   return name
@@ -25,13 +28,22 @@ const formatDate = (dateString) => {
   })
 }
 
-export default function CustomerCard({ customer, onEdit, onDelete, onViewDetails }) {
+export default function CustomerCard({
+  customer,
+  onDelete,
+  onViewDetails,
+  setCountUpdate
+}) {
+  const [openEditModal, setOpenEditModal] = useState(false)
   return (
     <div className='grid grid-cols-7 gap-4 p-4 items-center hover:bg-muted/50 transition-colors'>
       {/* Contact Info */}
       <div className='col-span-2 flex items-center gap-3'>
         <Avatar className='h-10 w-10'>
-          <AvatarImage src={`/avatars/customer-${customer.id}.png`} alt={customer.fullname} />
+          <AvatarImage
+            src={`/avatars/customer-${customer.id}.png`}
+            alt={customer.fullname}
+          />
           <AvatarFallback className='bg-primary/10 text-primary font-medium'>
             {getInitials(customer.fullname)}
           </AvatarFallback>
@@ -46,17 +58,25 @@ export default function CustomerCard({ customer, onEdit, onDelete, onViewDetails
       <div className='text-sm text-foreground'>{customer.phone}</div>
 
       {/* Address */}
-      <div className='text-sm text-foreground truncate' title={customer.address}>
+      <div
+        className='text-sm text-foreground truncate'
+        title={customer.address}
+      >
         {customer.address}
       </div>
 
       {/* Description */}
-      <div className='text-sm text-foreground truncate' title={customer.description}>
+      <div
+        className='text-sm text-foreground truncate'
+        title={customer.description}
+      >
         {customer.description}
       </div>
 
       {/* Created Date */}
-      <div className='text-sm text-foreground'>{formatDate(customer.createdAt)}</div>
+      <div className='text-sm text-foreground'>
+        {formatDate(customer.createdAt)}
+      </div>
 
       {/* Actions */}
       <div className='flex justify-end'>
@@ -70,9 +90,21 @@ export default function CustomerCard({ customer, onEdit, onDelete, onViewDetails
             <DropdownMenuItem onClick={() => onViewDetails?.(customer)}>
               View Details
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onEdit?.(customer)}>
-              Edit
-            </DropdownMenuItem>
+            <Dialog open={openEditModal} onOpenChange={setOpenEditModal}>
+              <DialogTrigger asChild>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                  Edit
+                </DropdownMenuItem>
+              </DialogTrigger>
+              <DialogContent className='sm:max-w-[425px]'>
+                <EditCustomerForm
+                  customer={customer}
+                  setCountUpdate={setCountUpdate}
+                  closeModal={() => setOpenEditModal(false)}
+                />
+              </DialogContent>
+            </Dialog>
+
             <DropdownMenuItem
               className='text-destructive'
               onClick={() => onDelete?.(customer)}
