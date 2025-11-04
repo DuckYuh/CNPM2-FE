@@ -7,4 +7,31 @@ const api = axios.create({
   }
 })
 
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    // Nếu token hết hạn hoặc lỗi 401
+    if (error.response && error.response.status === 401) {
+      console.warn('⚠️ Token expired or unauthorized')
+      localStorage.removeItem('token')
+      window.location.href = '/login' // chuyển về trang login
+    }
+    return Promise.reject(error)
+  }
+)
+
+
 export default api
