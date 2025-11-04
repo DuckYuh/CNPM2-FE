@@ -22,9 +22,9 @@ const Login = () => {
         console.log('Login success:', res.data)
 
         // lưu token (nếu có)
-        localStorage.setItem('token', res.data.token)
+        localStorage.setItem('token', res.data.data.accessToken)
 
-        navigate('/')
+        navigate('/dashboard')
         } catch (err) {
         console.error(err)
         alert('Login failed! Please check your credentials.')
