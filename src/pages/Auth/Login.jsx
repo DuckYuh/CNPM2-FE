@@ -17,19 +17,27 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         setLoading(true)
+        
         try {
-        const res = await api.post('/auth/login', formData)  // 🔹 gọi API từ Swagger
-        console.log('Login success:', res.data)
+            const res = await api.post('/auth/login', formData)
+            console.log('Login success:', res.data)
 
-        // lưu token (nếu có)
-        localStorage.setItem('token', res.data.token)
+            const { accessToken, refreshToken } = res.data?.data || {}
 
-        navigate('/')
+            if (accessToken) {
+            localStorage.setItem('token', accessToken)
+            localStorage.setItem('refreshToken', refreshToken)
+            console.log('Token saved:', accessToken)
+            navigate('/')
+            } else {
+            alert('Login failed: No token received.')
+            }
+
         } catch (err) {
-        console.error(err)
-        alert('Login failed! Please check your credentials.')
+            console.error(err)
+            alert('Login failed! Please check your credentials.')
         } finally {
-        setLoading(false)
+            setLoading(false)
         }
     }
     
