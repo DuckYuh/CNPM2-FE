@@ -25,7 +25,7 @@ export default function Header({ userData }) {
             </div>
             <div className='text-sm'>
               <div className='font-medium text-gray-900'>
-                {userData?.fullname || 'Unknown User'}
+                {userData?.fullname || userData?.email || 'User'}
               </div>
             </div>
             <ChevronRight className='w-4 h-4 text-gray-400' />
