@@ -146,16 +146,14 @@ export default function AnalyticsDashboard() {
   return (
     <div className="flex h-screen bg-blue-200">
       {/* Sidebar */}
-      <SideBar 
+      {/* <SideBar 
         navItems={navItems} 
         activeNav={activeNav} 
         onNavClick={(id) => setActiveNav(id)} 
-      />
+      /> */}
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <Header userData={{ fullname: 'John Doe' }} />
 
         {/* Content Area */}
         <div className="flex-1 overflow-auto p-8">
