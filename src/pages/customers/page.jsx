@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import CustomerCard from '~/components/customers/CustomerCard'
@@ -11,6 +11,7 @@ import {
   ArrowRightIcon
 } from 'lucide-react'
 import { customerApi } from '~/apis/customerApi'
+import { toast } from 'sonner'
 
 export default function CustomerListPage() {
   const [activeTab, setActiveTab] = useState('List')
@@ -45,6 +46,27 @@ export default function CustomerListPage() {
   const handleSearch = async (event) => {
     event.preventDefault()
     setLoading(true)
+    customerApi
+      .getAll(currentPage, pageSize, searchTerm)
+      .then((response) => {
+        setCustomers(response.data)
+        setTotalCustomers(response.totalItems)
+        setTotalPages(response.totalPages)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }
+
+  const handleDeleteCustomer = async (customer) => {
+    setLoading(true)
+
+    const loadingToast = toast.loading('Deleting customer...')
+    await customerApi.delete(customer.id)
+    // Refresh customer list after deletion
+    toast.success('Customer deleted successfully')
+    toast.dismiss(loadingToast)
+
     customerApi
       .getAll(currentPage, pageSize, searchTerm)
       .then((response) => {
@@ -155,7 +177,7 @@ export default function CustomerListPage() {
                 key={customer.id}
                 customer={customer}
                 onViewDetails={() => {}}
-                onDelete={() => {}}
+                onDelete={handleDeleteCustomer}
                 countUpdate={countUpdate}
                 setCountUpdate={setCountUpdate}
               />
