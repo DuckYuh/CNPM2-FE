@@ -6,7 +6,6 @@ import {useLocation, useNavigate} from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 
 function Layout() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const location = useLocation()
   console.log('Current location:', location.pathname)
   const [activeNav, setActiveNav] = useState(location.pathname.split('/')[1] || 'dashboard')
