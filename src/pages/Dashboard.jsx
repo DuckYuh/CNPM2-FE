@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { 
   LayoutDashboard, 
@@ -22,19 +21,15 @@ import {
   ArrowDownRight
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import SideBar from '~/components/SideBar';
-import Header from '~/components/Header';
 import axios from 'axios';
-import { set } from 'date-fns';
 
 export default function AnalyticsDashboard() {
-  const [activeNav, setActiveNav] = useState('dashboard');
   const [customers, setCustomers] = useState([]);
   const [numActiveUsers, setNumActiveUsers] = useState(0);
   const [numNewCustomers, setNumNewCustomers] = useState(0);
   const [customersByMonth, setCustomersByMonth] = useState([]);
   const [customersThisWeek, setCustomersThisWeek] = useState([]);
-  const base_url ='https://crmbackend-production-fdb8.up.railway.app'
+  const base_url = import.meta.env.VITE_API_URL || 'https://crmbackend-production-fdb8.up.railway.app';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -145,12 +140,6 @@ export default function AnalyticsDashboard() {
 
   return (
     <div className="flex h-screen bg-blue-200">
-      {/* Sidebar */}
-      {/* <SideBar 
-        navItems={navItems} 
-        activeNav={activeNav} 
-        onNavClick={(id) => setActiveNav(id)} 
-      /> */}
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
