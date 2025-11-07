@@ -105,7 +105,9 @@ export default function CustomerCard({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
-            <DropdownMenuItem onClick={() => navigate(`/customers/${customer.id}`)}>
+            <DropdownMenuItem
+              onClick={() => navigate(`/customers/${customer.id}`)}
+            >
               View Details
             </DropdownMenuItem>
             <Dialog open={openEditModal} onOpenChange={setOpenEditModal}>

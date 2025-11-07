@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   Plane,
   Users,
+  UserCog,
   MessageSquare,
   Info,
   LogOut
@@ -12,11 +13,21 @@ import { useNavigate } from 'react-router-dom'
 
 export default function SideBar({ activeNav, setActiveNav }) {
   const navigate = useNavigate()
+  // TODO: Replace with actual auth check when AuthContext is available
+  const hasRole = (role) => true // Temporary - shows all menu items
+
   const navItems = [
-    { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { id: 'customers', icon: Users, label: 'Customers' },
-    { id: 'events', icon: Plane, label: 'Events' },
-    { id: 'info', icon: Info, label: 'Info Portal' }
+    { id: 'dashboard', href: '/', icon: LayoutDashboard, label: 'Dashboard' },
+    { id: 'customers', href: '/customers', icon: Users, label: 'Customers' },
+    {
+      id: 'users',
+      href: '/users',
+      icon: UserCog,
+      label: 'User Management',
+      requiresRole: ['admin', 'manager'] // Only show to admins/managers
+    },
+    { id: 'events', href: '/events', icon: Plane, label: 'Events' },
+    { id: 'info', href: '/info', icon: Info, label: 'Info Portal' }
   ]
 
   const Logout = () => {
@@ -35,6 +46,14 @@ export default function SideBar({ activeNav, setActiveNav }) {
         {/* Navigation */}
         <nav className='flex-1 px-3'>
           {navItems.map((item) => {
+            // Check if item requires specific role and user has that role
+            if (
+              item.requiresRole &&
+              !item.requiresRole.some((role) => hasRole(role))
+            ) {
+              return null
+            }
+
             const Icon = item.icon
             const isActive = activeNav === item.id
             return (
@@ -42,7 +61,7 @@ export default function SideBar({ activeNav, setActiveNav }) {
                 key={item.id}
                 onClick={() => {
                   setActiveNav(item.id)
-                  navigate(`/${item.id}`)
+                  navigate(item.href)
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg mb-1 transition-all ${
                   isActive
@@ -76,7 +95,10 @@ export default function SideBar({ activeNav, setActiveNav }) {
           </div>
 
           {/* Logout */}
-          <button onClick={Logout} className='w-full flex items-center gap-3 px-4 py-3 rounded-lg mb-1 transition-all text-gray-600 hover:bg-gray-50'>
+          <button
+            onClick={Logout}
+            className='w-full flex items-center gap-3 px-4 py-3 rounded-lg mb-1 transition-all text-gray-600 hover:bg-gray-50'
+          >
             <LogOut className='w-5 h-5' />
             <span>Logout</span>
           </button>

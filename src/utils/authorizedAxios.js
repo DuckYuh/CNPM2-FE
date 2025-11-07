@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { toast } from 'sonner'
+import { jwtDecode } from 'jwt-decode'
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL ||
@@ -17,7 +18,10 @@ authorizedAxiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token')
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`
+      const payload = jwtDecode(token)
+      if (payload) {
+        config.headers['userId'] = payload.sub
+      }
     }
     return config
   },
@@ -36,9 +40,7 @@ authorizedAxiosInstance.interceptors.response.use(
       localStorage.removeItem('token')
       window.location.href = '/login' // chuyển về trang login
     }
-    toast.error(
-      error.message || error.response?.data?.message || 'An error occurred'
-    )
+
     return Promise.reject(error)
   }
 )

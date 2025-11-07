@@ -17,13 +17,11 @@ function Layout() {
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    console.log('Token in Layout:', token)
     if (!token) {
       navigate('/login')
     } else {
       // Fetch user data logic here if needed
       const decoded = jwtDecode(token)
-      console.log('decoded:', decoded)
       setUserData(decoded) // Placeholder
     }
   }, [])

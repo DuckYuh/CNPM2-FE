@@ -6,19 +6,20 @@ export const notesApi = {
   getByCustomerId: async (customerId, page = 0, size = 10) => {
     const params = new URLSearchParams({
       page: page.toString(),
-      size: size.toString()
+      size: size.toString(),
+      customerId: customerId.toString()
     })
 
     const response = await authorizedAxiosInstance.get(
-      `/customers/${customerId}/notes?${params}`
+      `/customer-notes/?${params}`
     )
     return response.data
   },
 
   // Create new note
-  create: async (customerId, noteData) => {
+  create: async (noteData) => {
     const response = await authorizedAxiosInstance.post(
-      `/customers/${customerId}/notes`,
+      '/customer-notes/create',
       noteData
     )
     return response.data
@@ -27,7 +28,7 @@ export const notesApi = {
   // Update note
   update: async (noteId, noteData) => {
     const response = await authorizedAxiosInstance.put(
-      `/notes/${noteId}`,
+      `/customer-notes/update/${noteId}`,
       noteData
     )
     return response.data
@@ -35,7 +36,9 @@ export const notesApi = {
 
   // Delete note
   delete: async (noteId) => {
-    const response = await authorizedAxiosInstance.delete(`/notes/${noteId}`)
+    const response = await authorizedAxiosInstance.delete(
+      `/customer-notes/delete/${noteId}`
+    )
     return response.data
   }
 }

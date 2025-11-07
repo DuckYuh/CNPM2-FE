@@ -37,26 +37,7 @@ import {
   ChevronRight
 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-
-// Mock fallback data
-const mockNotes = [
-  {
-    id: '1',
-    content:
-      'Customer called about billing inquiry. Resolved by explaining the charges.',
-    createdAt: '2025-11-05T10:30:00',
-    updatedAt: '2025-11-05T10:30:00',
-    staffName: 'John Smith'
-  },
-  {
-    id: '2',
-    content:
-      'Follow-up meeting scheduled for next week to discuss contract renewal.',
-    createdAt: '2025-11-04T14:15:00',
-    updatedAt: '2025-11-04T14:15:00',
-    staffName: 'Jane Doe'
-  }
-]
+import EditCustomerForm from '~/components/customers/EditCustomerForm'
 
 const getInitials = (name) => {
   return (
@@ -142,10 +123,10 @@ function NoteForm({ note, customerId, onSuccess, onCancel }) {
     setIsSubmitting(true)
     try {
       if (note) {
-        await notesApi.update(note.id, data)
+        await notesApi.update({ id: note.id, ...data })
         toast.success('Note updated successfully')
       } else {
-        await notesApi.create(customerId, data)
+        await notesApi.create({ customerId, ...data })
         toast.success('Note added successfully')
       }
       reset()
@@ -202,6 +183,8 @@ export default function CustomerProfilePage() {
   const [notesLoading, setNotesLoading] = useState(false)
   const [editingNote, setEditingNote] = useState(null)
   const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false)
+  const [openEditModal, setOpenEditModal] = useState(false)
+
 
   const { id } = useParams()
   const notesPageSize = 5
@@ -237,10 +220,7 @@ export default function CustomerProfilePage() {
         setTotalNotes(response.totalItems || response.totalElements || 0)
         setTotalNotesPages(response.totalPages || 1)
       } catch {
-        // Fallback to mock data
-        setNotes(mockNotes)
-        setTotalNotes(mockNotes.length)
-        setTotalNotesPages(1)
+        toast.error('Failed to fetch notes.')
       } finally {
         setNotesLoading(false)
       }
@@ -390,10 +370,21 @@ export default function CustomerProfilePage() {
                 </div>
               </div>
 
-              <Button className='w-full' variant='outline'>
-                <Edit3 className='h-4 w-4 mr-2' />
-                Edit Profile
-              </Button>
+              <Dialog open={openEditModal} onOpenChange={setOpenEditModal}>
+                <DialogTrigger asChild>
+                  <Button className='w-full' variant='outline'>
+                    <Edit3 className='h-4 w-4 mr-2' />
+                    Edit Profile
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className='sm:max-w-[425px]'>
+                  <EditCustomerForm
+                    customer={customer}
+                    closeModal={() => setOpenEditModal(false)}
+                    setCustomer={setCustomer}
+                  />
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </Card>
         </div>
@@ -441,28 +432,6 @@ export default function CustomerProfilePage() {
               ) : notes.length === 0 ? (
                 <div className='text-center py-8'>
                   <p className='text-muted-foreground mb-4'>No notes yet</p>
-                  <Dialog
-                    open={isNoteDialogOpen}
-                    onOpenChange={setIsNoteDialogOpen}
-                  >
-                    <DialogTrigger asChild>
-                      <Button onClick={() => setEditingNote(null)}>
-                        <Plus className='h-4 w-4 mr-2' />
-                        Add First Note
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <NoteForm
-                        note={editingNote}
-                        customerId={id}
-                        onSuccess={handleNoteSuccess}
-                        onCancel={() => {
-                          setIsNoteDialogOpen(false)
-                          setEditingNote(null)
-                        }}
-                      />
-                    </DialogContent>
-                  </Dialog>
                 </div>
               ) : (
                 <>

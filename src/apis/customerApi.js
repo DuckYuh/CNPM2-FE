@@ -22,7 +22,7 @@ export const customerApi = {
   // Get customer by ID
   getById: async (id) => {
     const response = await authorizedAxiosInstance.get(`/customers/${id}`)
-    return response.data
+    return response.data.data
   },
 
   // Create new customer
