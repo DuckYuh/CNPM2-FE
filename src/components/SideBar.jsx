@@ -25,8 +25,8 @@ export default function SideBar({ activeNav, setActiveNav }) {
   }
 
   return (
-    <div className='min-h-screen fixed top-0 left-0 p-6'>
-      <div className='w-64 bg-white border-r border-gray-200 flex flex-col rounded-lg min-h-[94vh]'>
+    <div className='min-h-screen fixed top-0 left-0 p-6 pr-0 w-72'>
+      <div className='w-full bg-white border-r border-gray-200 flex flex-col rounded-lg min-h-[94vh]'>
         {/* Logo */}
         <div className='p-6'>
           <img src='/assets/logo.png' alt='' className='w-12 h-12' />

@@ -10,6 +10,7 @@ import { MoreHorizontal } from 'lucide-react'
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import EditCustomerForm from './EditCustomerForm'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,6 +47,7 @@ export default function CustomerCard({
   setCountUpdate
 }) {
   const [openEditModal, setOpenEditModal] = useState(false)
+  const navigate = useNavigate()
   return (
     <div className='grid grid-cols-7 gap-4 p-4 items-center hover:bg-muted/50 transition-colors'>
       {/* Contact Info */}
@@ -60,7 +62,12 @@ export default function CustomerCard({
           </AvatarFallback>
         </Avatar>
         <div>
-          <div className='font-medium text-foreground'>{customer.fullname}</div>
+          <div
+            className='font-medium text-foreground hover:text-primary cursor-pointer'
+            onClick={() => navigate(`/customers/${customer.id}`)}
+          >
+            {customer.fullname}
+          </div>
           <div className='text-sm text-muted-foreground'>{customer.email}</div>
         </div>
       </div>
@@ -98,7 +105,7 @@ export default function CustomerCard({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
-            <DropdownMenuItem onClick={() => onViewDetails?.(customer)}>
+            <DropdownMenuItem onClick={() => navigate(`/customers/${customer.id}`)}>
               View Details
             </DropdownMenuItem>
             <Dialog open={openEditModal} onOpenChange={setOpenEditModal}>
