@@ -29,8 +29,17 @@ const Login = () => {
   return (
     <div className='min-h-screen flex'>
       {/* Left Instructions Side */}
-      <div className='hidden lg:flex w-1/3 bg-mainColor1-500 p-12 text-primary-foreground flex-col justify-between'>
+      <div className='hidden lg:flex w-1/4 bg-mainColor1-500 p-12 text-primary-foreground flex-col justify-between'>
         <div className='space-y-6'>
+            
+          <div className='flex items-center'>
+            <img 
+                src="/assets/logo.png" 
+                alt="Company Logo" 
+                className="max-w-[200px] h-auto"
+            />
+          </div>
+
           <h1 className='text-4xl font-bold'>Welcome Back!</h1>
           <p className='text-lg'>
             Log in to access your account and manage your services.
@@ -54,7 +63,7 @@ const Login = () => {
       </div>
 
       {/* Right Login Form Side */}
-      <div className='w-full lg:w-2/3 flex items-center justify-center p-8 bg-mainBg-500'>
+      <div className='w-full lg:w-3/4 flex items-center justify-center p-8 bg-mainBg-500'>
         <Card className='w-full max-w-md p-8 space-y-6'>
           <div className='space-y-2 text-center'>
             <h2 className='text-3xl font-bold'>Login</h2>
