@@ -250,7 +250,8 @@ export default function CustomerProfilePage() {
       setTotalNotes(response.totalItems)
       setTotalNotesPages(response.totalPages)
     } catch (error) {
-      toast.error('Failed to delete note')
+      console.log(error);
+      toast.error(`${error.response.data.message}`)
     }
   }
 
