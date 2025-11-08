@@ -215,7 +215,7 @@ export default function AnalyticsDashboard() {
             />
 
             <StatCard
-              title='Active Users'
+              title='Active Customers'
               value={numActiveUsers}
               change={-3.2}
               icon={Users}
