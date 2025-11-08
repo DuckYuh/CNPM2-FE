@@ -13,7 +13,7 @@ export default function Header({ userData }) {
         console.log("User data: ",res.data)
         setUser(res.data.data)
       } catch (error) {
-        alert('There is something wrong')
+        console.warn('There is something wrong')
       }
     }
     fetchData()
