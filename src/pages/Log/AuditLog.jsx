@@ -113,7 +113,7 @@ const AuditLog = () => {
       case 'DELETE': return 'Delete'
       case 'EDIT': return 'Delete' // show Delete for EDIT values
       case 'EMAIL': return 'Email'
-      default: return action || '-'
+      default: return action ? action.charAt(0).toUpperCase() + action.slice(1).toLowerCase() : '-'
     }
   }
 
@@ -202,7 +202,10 @@ const AuditLog = () => {
                   <SelectItem value="CREATE">Create</SelectItem>
                   <SelectItem value="UPDATE">Update</SelectItem>
                   <SelectItem value="EDIT">Delete</SelectItem>
-                  <SelectItem value="EMAIL">EMAIL</SelectItem>
+                  <SelectItem value="EMAIL">Email</SelectItem>
+                  <SelectItem value="CALL">Calling</SelectItem>
+                  <SelectItem value="MEETING">Meeting</SelectItem>
+                  <SelectItem value="OTHER">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -267,6 +270,11 @@ const AuditLog = () => {
                   ${log.action === 'DELETE' ? 'bg-red-100 text-red-800' : ''}
                   ${log.action === 'EMAIL' ? 'bg-gray-100 text-gray-800' : ''}
                   ${log.action === 'EDIT' ? 'bg-red-100 text-pink-800' : ''}
+                  ${log.action === 'EMAIL' ? 'bg-brown-100 text-brown-800' : ''}
+                  ${log.action === 'CALL' ? 'bg-yellow-100 text-yellow-800' : ''}
+                  ${log.action === 'OTHER' ? 'bg-gray-100 text-gray-800' : ''}
+                  ${log.action === 'MEETING' ? 'bg-purple-100 text-purple-800' : ''}
+                  ${log.action === 'LOGIN' ? 'bg-red-100 text-pink-800' : ''}
                 `}>
                   {getActionLabel(log.action)}
                 </span>
