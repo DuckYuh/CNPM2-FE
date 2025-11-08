@@ -47,7 +47,8 @@ const formSchema = Joi.object({
 export default function EditCustomerForm({
   customer,
   setCountUpdate,
-  closeModal
+  closeModal,
+  setCustomer
 }) {
   const form = useForm({
     resolver: joiResolver(formSchema),
@@ -64,15 +65,31 @@ export default function EditCustomerForm({
   const { errors, isSubmitting } = formState
 
   const onSubmit = async (data) => {
-    toast.promise(customerApi.update(customer.id, data), {
-      loading: 'Saving changes...',
-      success: () => {
-        setCountUpdate((prev) => prev + 1)
-        return 'Customer updated successfully!'
-      },
-      error: 'Failed to update customer.'
-    })
-    closeModal()
+    const toastId = toast.loading('Saving changes...')
+    try {
+      // Await the API call instead of mixing then/catch
+      const res = await customerApi.update(customer.id, data)
+
+      // If backend indicates failure in body, throw to go to catch
+      if (
+        res &&
+        (res.success === false || res.status === 'error' || res.error)
+      ) {
+        throw new Error(
+          res.message || res.error || 'Failed to update customer.'
+        )
+      }
+      if (setCustomer) {
+        setCustomer(res.data)
+      }
+      if (setCountUpdate) {
+        setCountUpdate((count) => count + 1)
+      }
+      toast.success('Customer updated successfully!', { id: toastId })
+      closeModal()
+    } catch (err) {
+      toast.error(err?.message || 'Failed to update customer.', { id: toastId })
+    }
   }
 
   return (

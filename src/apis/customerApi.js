@@ -1,4 +1,3 @@
-import axios from 'axios'
 import authorizedAxiosInstance from '~/utils/authorizedAxios'
 
 // Customer APIs
@@ -22,27 +21,17 @@ export const customerApi = {
 
   // Get customer by ID
   getById: async (id) => {
-    try {
-      const response = await authorizedAxiosInstance.get(`/customers/${id}`)
-      return response.data
-    } catch (error) {
-      console.error('Error fetching customer:', error)
-      throw error
-    }
+    const response = await authorizedAxiosInstance.get(`/customers/${id}`)
+    return response.data.data
   },
 
   // Create new customer
   create: async (customerData) => {
-    try {
-      const response = await authorizedAxiosInstance.post(
-        '/customers',
-        customerData
-      )
-      return response.data
-    } catch (error) {
-      console.error('Error creating customer:', error)
-      throw error
-    }
+    const response = await authorizedAxiosInstance.post(
+      '/customers',
+      customerData
+    )
+    return response.data
   },
 
   // Update customer
