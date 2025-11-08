@@ -107,6 +107,17 @@ const AuditLog = () => {
         }
     }
 
+    const getActionLabel = (action) => {
+        switch (action) {
+            case 'CREATE': return 'Create'
+            case 'UPDATE': return 'Update'
+            case 'DELETE': return 'Delete'
+            case 'EDIT': return 'Delete' // 👈 hiển thị Delete dù value là EDIT
+            case 'LOGIN': return 'Login'
+            default: return action || '-'
+        }
+    }
+
     return (
         <div className='min-h-screen'>
             {/* Header */}
@@ -151,7 +162,7 @@ const AuditLog = () => {
                                     <SelectItem value="all">All Actions</SelectItem>
                                     <SelectItem value="CREATE">Create</SelectItem>
                                     <SelectItem value="UPDATE">Update</SelectItem>
-                                    <SelectItem value="DELETE">Delete</SelectItem>
+                                    <SelectItem value="EDIT">Delete</SelectItem>
                                     <SelectItem value="LOGIN">Login</SelectItem>
                                 </SelectContent>
                             </Select>
@@ -218,7 +229,7 @@ const AuditLog = () => {
                                     ${log.action === 'LOGIN' ? 'bg-gray-100 text-gray-800' : ''}
                                     ${log.action === 'EDIT' ? 'bg-red-100 text-pink-800' : ''}
                                 `}>
-                                    {log.action || '-'}
+                                    {getActionLabel(log.action)}
                                 </span>
                             </div>
                             <div className='text-xs text-muted-foreground'>{log.type || '-'}</div>
