@@ -10,11 +10,13 @@ import {
   LogOut
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '~/context/AuthContext'
 
 export default function SideBar({ activeNav, setActiveNav }) {
   const navigate = useNavigate()
   // TODO: Replace with actual auth check when AuthContext is available
-  const hasRole = (role) => true // Temporary - shows all menu items
+  const { user } = useAuth()
+  const hasRole = (role) => user?.roles?.includes(role)
 
   const navItems = [
     { id: 'dashboard', href: '/', icon: LayoutDashboard, label: 'Dashboard' },
@@ -24,7 +26,7 @@ export default function SideBar({ activeNav, setActiveNav }) {
       href: '/users',
       icon: UserCog,
       label: 'User Management',
-      requiresRole: ['admin', 'manager'] // Only show to admins/managers
+      requiresRole: ['ADMIN'] // Only show to admins/managers
     },
     { id: 'logs', href: '/logs', icon: Plane, label: 'Audit logs' },
     { id: 'info', href: '/info', icon: Info, label: 'Info Portal' }

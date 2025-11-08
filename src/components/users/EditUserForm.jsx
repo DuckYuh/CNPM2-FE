@@ -23,7 +23,7 @@ import { userApi } from '~/apis'
 import { useState, useEffect } from 'react'
 
 const formSchema = Joi.object({
-  fullname: Joi.string().min(2).max(50).required().messages({
+  fullName: Joi.string().min(2).max(50).required().messages({
     'string.empty': 'Full name is required',
     'string.min': 'Full name must be at least 2 characters',
     'string.max': 'Full name must be at most 50 characters'
@@ -76,7 +76,7 @@ export default function EditUserForm({
   const form = useForm({
     resolver: joiResolver(formSchema),
     defaultValues: {
-      fullname: user?.fullname || user?.name || '',
+      fullName: user?.fullName || user?.name || '',
       email: user?.email || '',
       phone: user?.phone || '',
       role: user?.role || 'user',
@@ -97,7 +97,7 @@ export default function EditUserForm({
     try {
       // Update user
       const res = await userApi.update(user.id, {
-        fullname: data.fullname,
+        fullName: data.fullName,
         email: data.email,
         phone: data.phone,
         role: data.role
@@ -149,14 +149,14 @@ export default function EditUserForm({
 
       <div className='grid gap-4'>
         <div className='grid gap-2'>
-          <Label htmlFor='fullname'>Full Name</Label>
+          <Label htmlFor='fullName'>Full Name</Label>
           <Input
-            id='fullname'
-            {...register('fullname')}
-            aria-invalid={errors.fullname ? 'true' : 'false'}
+            id='fullName'
+            {...register('fullName')}
+            aria-invalid={errors.fullName ? 'true' : 'false'}
           />
-          {errors.fullname && (
-            <p className='text-sm text-red-600'>{errors.fullname.message}</p>
+          {errors.fullName && (
+            <p className='text-sm text-red-600'>{errors.fullName.message}</p>
           )}
         </div>
 

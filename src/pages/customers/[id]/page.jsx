@@ -246,7 +246,7 @@ export default function CustomerProfilePage() {
         notesPage,
         notesPageSize
       )
-      setNotes(response.data)
+      setNotes(response.content)
       setTotalNotes(response.totalItems)
       setTotalNotesPages(response.totalPages)
     } catch (error) {

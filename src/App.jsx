@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import CustomerListPage from '~/pages/customers/page'
 import CustomerProfilePage from '~/pages/customers/[id]/page'
 import UsersPage from '~/pages/users/page'
+import UserProfilePage from '~/pages/users/[id]/page'
 import Layout from './components/Layout'
 
 import Login from './pages/Auth/Login'
@@ -30,6 +31,7 @@ function App() {
           <Route path='customers' element={<CustomerListPage />} />
           <Route path='customers/:id' element={<CustomerProfilePage />} />
           <Route path='users' element={<UsersPage />} />
+          <Route path='users/:id' element={<UserProfilePage />} />
           <Route path='logs' element={<AuditLog />} />
         </Route>
         <Route path='/login' element={<Login />} />

@@ -40,10 +40,10 @@ export const notesApi = {
 
   // Delete note
   delete: async (noteId) => {
-    const response = await authorizedAxiosInstance.delete(
+    const response = await authorizedAxiosInstance.put(
       `/customer-notes/delete/${noteId}`
     )
-    return response.data
+    return response.data.data
   }
 }
 

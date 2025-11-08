@@ -132,7 +132,7 @@ export default function UsersPage() {
       setTotalPages(response.totalPages || 0)
     } catch (error) {
       toast.error('Failed to activate user')
-      .consoleerror('Error activating user:', error)
+      console.error('Error activating user:', error)
     } finally {
       setLoading(false)
     }
@@ -248,9 +248,8 @@ export default function UsersPage() {
       {/* User List */}
       <div className='bg-card rounded-lg border shadow-sm'>
         {/* Table Header */}
-        <div className='grid grid-cols-8 gap-4 p-4 border-b bg-muted/50 text-sm font-medium text-muted-foreground'>
+        <div className='grid grid-cols-7 gap-4 p-4 border-b bg-muted/50 text-sm font-medium text-muted-foreground'>
           <div className='col-span-2'>User Info</div>
-          <div>Phone</div>
           <div>Role</div>
           <div>Status</div>
           <div>Last Login</div>
