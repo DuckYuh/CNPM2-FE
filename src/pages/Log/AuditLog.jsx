@@ -110,7 +110,7 @@ const AuditLog = () => {
       case 'UPDATE': return 'Update'
       case 'DELETE': return 'Delete'
       case 'EDIT': return 'Delete' // show Delete for EDIT values
-      case 'LOGIN': return 'Login'
+      case 'EMAIL': return 'Email'
       default: return action || '-'
     }
   }
@@ -190,7 +190,7 @@ const AuditLog = () => {
                   <SelectItem value="CREATE">Create</SelectItem>
                   <SelectItem value="UPDATE">Update</SelectItem>
                   <SelectItem value="EDIT">Delete</SelectItem>
-                  <SelectItem value="LOGIN">Login</SelectItem>
+                  <SelectItem value="EMAIL">EMAIL</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -232,9 +232,10 @@ const AuditLog = () => {
 
       {/* Logs Table */}
       <div className='bg-card rounded-lg border shadow-sm'>
-        <div className='grid grid-cols-4 gap-4 p-4 border-b bg-muted/50 text-sm font-medium text-muted-foreground'>
+        <div className='grid grid-cols-5 gap-4 p-4 border-b bg-muted/50 text-sm font-medium text-muted-foreground'>
           <div>Username</div>
           <div>Action</div>
+          <div>Type</div>
           <div>Time</div>
           <div>Description</div>
         </div>
@@ -245,19 +246,20 @@ const AuditLog = () => {
           <div className='p-4'>No logs found.</div>
         ) : (
           filteredLogs.map((log) => (
-            <div key={log.id || `${log.userId}-${log.createdAt}`} className='grid grid-cols-4 gap-4 p-4 border-b text-sm'>
+            <div key={log.id || `${log.userId}-${log.createdAt}`} className='grid grid-cols-5 gap-4 p-4 border-b text-sm'>
               <div>{log.username || log.userId || '-'}</div>
               <div>
                 <span className={`px-2 py-1 rounded-full text-xs
                   ${log.action === 'CREATE' ? 'bg-green-100 text-green-800' : ''}
                   ${log.action === 'UPDATE' ? 'bg-blue-100 text-blue-800' : ''}
                   ${log.action === 'DELETE' ? 'bg-red-100 text-red-800' : ''}
-                  ${log.action === 'LOGIN' ? 'bg-gray-100 text-gray-800' : ''}
+                  ${log.action === 'EMAIL' ? 'bg-gray-100 text-gray-800' : ''}
                   ${log.action === 'EDIT' ? 'bg-red-100 text-pink-800' : ''}
                 `}>
                   {getActionLabel(log.action)}
                 </span>
               </div>
+              <div>{formatDate(log.type)}</div>
               <div>{formatDate(log.createdAt)}</div>
               <div className='break-words whitespace-pre-wrap'>{cleanDescription(log.description)}</div>
             </div>
