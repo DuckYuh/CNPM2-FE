@@ -59,7 +59,7 @@ export default {
           5: 'hsl(var(--chart-5))'
         },
         mainColor1: {
-          500: '#3F8CFF',
+          500: '#6d9ee7ff',
         },
         mainColor2: {
           500: '#CEACD1',
