@@ -1,18 +1,19 @@
 import { Search, Bell, ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import api from '~/apis/axios'
+
+const base_url = import.meta.env.VITE_API_URL || 'https://crmbackend-production-fdb8.up.railway.app';
 
 export default function Header({ userData }) {
   const [user, setUser] = useState(null)
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await api.get(`api/auth/getDetail/${userData.email}`)
+        const res = await axios.get(`${base_url}/api/auth/getDetail/${userData.id}`)
         console.log("User data: ",res.data)
         setUser(res.data.data)
       } catch (error) {
-        alert('There is something wrong')
+        console.warn('There is something wrong')
       }
     }
     fetchData()
@@ -22,14 +23,7 @@ export default function Header({ userData }) {
     <header className='py-4 rounded-lg max-h-full mb-6'>
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-4 flex-1 max-w-md'>
-          <div className='relative flex-1'>
-            <Search className='w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400' />
-            <input
-              type='text'
-              placeholder='Search'
-              className='w-full pl-10 pr-4 py-2 bg-white border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
-            />
-          </div>
+          <div className='relative flex-1'></div>
         </div>
 
         <div className='flex items-center gap-4'>
@@ -42,7 +36,7 @@ export default function Header({ userData }) {
             </div>
             <div className='text-sm'>
               <div className='font-medium text-gray-900'>
-                {user?.fullName || 'User'}
+                {user?.fullName || user?.email || 'User'}
               </div>
             </div>
             <ChevronRight className='w-4 h-4 text-gray-400' />

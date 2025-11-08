@@ -33,6 +33,8 @@ import { Tabs, TabsList, TabsTrigger } from "../../components/ui/tabs";
 
 import activityLogs from "./data";
 
+import FormData from "~/components/FormData";
+
 import axios from "axios";
 
 const base_url = import.meta.env.VITE_API_URL || 'https://crmbackend-production-fdb8.up.railway.app';
@@ -42,7 +44,11 @@ const getBadgeColor = (level) => {
   switch (level.toLowerCase()) {
     case "call":
       return "bg-blue-100 text-blue-800 hover:bg-blue-100/80";
+    case "create":
+      return "bg-blue-100 text-blue-800 hover:bg-blue-100/80";
     case "email":
+      return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100/80";
+    case "edit":
       return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100/80";
     case "meeting":
       return "bg-green-100 text-green-800 hover:bg-green-100/80";
@@ -65,12 +71,14 @@ export default function ActivityTable() {
   const [interactions, setInteractions] = useState([])
   const [current, setCurrent] = useState(0)
   const [lim, setLim] = useState(8)
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     const fetchData = async () =>{
         try {
-            const res = await axios.get(`${base_url}/activities`)
-            setInteractions(res.data.data)
+            const res = await axios.get(`${base_url}/api/audit/logs?type=interaction`)
+            console.log("action log: ",res.data)
+            setInteractions(res.data.content)
         } catch (error) {
             setInteractions(activityLogs)
         }
@@ -83,10 +91,11 @@ export default function ActivityTable() {
     <div className="flex min-h-screen w-full bg-gray-50/90">
       <div className="flex flex-1 flex-col">
         <main className="flex-1 p-6">
-          <PageHeader num_of_interactions={interactions.length}/>
+          <FormData open={open} setOpen={setOpen}/>
+          <PageHeader num_of_interactions={interactions?.length} setOpen={setOpen}/>
           <div className="mt-6 flex flex-col gap-4">
             <TableHeader />
-            {interactions.slice(current, current + lim).map((interaction, index) => (
+            {interactions?.slice(current, current + lim).map((interaction, index) => (
               <EmployeeCard 
                 key={index} 
                 interaction={interaction} 
@@ -98,7 +107,7 @@ export default function ActivityTable() {
            setCurrent={setCurrent}
            lim={lim}
            setLim={setLim}
-           total={interactions.length}
+           total={interactions?.length}
           />
         </main>
       </div>
@@ -106,12 +115,12 @@ export default function ActivityTable() {
   );
 }
 
-function PageHeader({ num_of_interactions = 0 }) {
+function PageHeader({ num_of_interactions = 0, setOpen }) {
   return (
     <div className="flex items-center justify-between">
       <h1 className="text-2xl font-bold">Total Interactions ({num_of_interactions})</h1>
       <div className="flex items-center gap-2">
-        <Tabs defaultValue="list">
+        {/* <Tabs defaultValue="list">
           <TabsList>
             <TabsTrigger value="list">List</TabsTrigger>
             <TabsTrigger value="activity">Activity</TabsTrigger>
@@ -119,8 +128,8 @@ function PageHeader({ num_of_interactions = 0 }) {
         </Tabs>
         <Button variant="outline" size="icon">
           <Filter className="h-4 w-4" />
-        </Button>
-        <Button className="bg-blue-500 hover:bg-blue-600">
+        </Button> */}
+        <Button className="bg-blue-500 hover:bg-blue-600" onClick={() => setOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
           Add Interaction
         </Button>
@@ -162,16 +171,16 @@ function EmployeeCard({ interaction, current, lim }) {
         {/* Name & Email */}
         <div className="col-span-12 flex items-center gap-4 md:col-span-2">
           <Avatar className="h-10 w-10">
-            <AvatarImage src={interaction.avatar} alt={interaction.customer} />
-            <AvatarFallback className="blue">{interaction.customer.charAt(0)}</AvatarFallback>
+            <AvatarImage src={interaction?.avatar} alt={interaction?.customer || interaction?.customerEmail} />
+            <AvatarFallback className="blue">{interaction?.customer ? interaction?.customer.charAt(0) : "C"}</AvatarFallback>
           </Avatar>
           <div>
-            <p className="font-semibold text-gray-900">{interaction.customer}</p>
+            <p className="font-semibold text-gray-900">{interaction?.customer || interaction.customerEmail}</p>
             {/* <p className="text-sm text-gray-500">{employee.email}</p> */}
           </div>
         </div>
 
-        <div className="col-span-6 text-sm md:col-span-2">{interaction.staff || 'admin'}</div>
+        <div className="col-span-6 text-sm md:col-span-2">{interaction?.staff || interaction?.userEmail || 'admin'}</div>
 
         {/* Position & Level */}
         <div className="col-span-6 flex items-center gap-2 md:col-span-3">
@@ -181,7 +190,7 @@ function EmployeeCard({ interaction, current, lim }) {
         </div>
 
         {/* Birthday */}
-        <div className="col-span-6 text-sm text-gray-600 md:col-span-2">{formatDate(interaction.created_date)}</div>
+        <div className="col-span-6 text-sm text-gray-600 md:col-span-2">{formatDate(interaction.createdAt)}</div>
         
         {/* Full Age */}
         <div className="col-span-6 text-sm text-gray-600 md:col-span-1">{interaction.description.slice(0,10) + " ..."}</div>
@@ -215,10 +224,10 @@ function PaginationControls({
     <div className="mt-6 flex items-center justify-end gap-4 text-sm">
       <span className="text-gray-600">{current + 1}-{current + lim} of {total}</span>
       <div className="flex items-center gap-1">
-        <Button variant="outline" size="icon" className="h-8 w-8" disable={current-lim >= 0} onClick={() => setCurrent(current - lim >= 0 ? current - lim : current)}>
+        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrent(current - lim >= 0 ? current - lim : current)}>
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <Button variant="outline" size="icon" className="h-8 w-8" disable={current+lim < total} onClick={() => setCurrent(current + lim < total ? current + lim : current)} >
+        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrent(current + lim < total ? current + lim : current)} >
           <ChevronRight className="h-4 w-4"  />
         </Button>
       </div>
