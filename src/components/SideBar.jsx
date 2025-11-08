@@ -26,7 +26,7 @@ export default function SideBar({ activeNav, setActiveNav }) {
       label: 'User Management',
       requiresRole: ['admin', 'manager'] // Only show to admins/managers
     },
-    { id: 'logs', href: '/logs', icon: Plane, label: 'Audit logs' },
+    { id: 'logs', href: '/logs', icon: Plane, label: 'Activity logs' },
     { id: 'info', href: '/info', icon: Info, label: 'Info Portal' }
   ]
 
