@@ -1,6 +1,23 @@
 import { Search, Bell, ChevronRight } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import api from '~/apis/axios'
 
 export default function Header({ userData }) {
+  const [user, setUser] = useState(null)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await api.get(`api/auth/getDetail/${userData.email}`)
+        console.log("User data: ",res.data)
+        setUser(res.data.data)
+      } catch (error) {
+        alert('There is something wrong')
+      }
+    }
+    fetchData()
+  },[])
+
   return (
     <header className='py-4 rounded-lg max-h-full mb-6'>
       <div className='flex items-center justify-between'>
@@ -25,7 +42,7 @@ export default function Header({ userData }) {
             </div>
             <div className='text-sm'>
               <div className='font-medium text-gray-900'>
-                {userData?.fullname || userData?.email || 'User'}
+                {user?.fullName || 'User'}
               </div>
             </div>
             <ChevronRight className='w-4 h-4 text-gray-400' />

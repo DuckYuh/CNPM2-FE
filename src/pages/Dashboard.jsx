@@ -8,20 +8,12 @@ import {
   Users, 
   MessageSquare, 
   Info,
-  LogOut,
-  Search,
-  Bell,
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  ShoppingCart,
-  Activity,
-  ChevronRight,
   ArrowUpRight,
   ArrowDownRight
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import axios from 'axios';
+import api from '~/apis/axios';
 
 export default function AnalyticsDashboard() {
   const [customers, setCustomers] = useState([]);
@@ -29,6 +21,11 @@ export default function AnalyticsDashboard() {
   const [numNewCustomers, setNumNewCustomers] = useState(0);
   const [customersByMonth, setCustomersByMonth] = useState([]);
   const [customersThisWeek, setCustomersThisWeek] = useState([]);
+
+  const [activities, setActivities] = useState([])
+  const [allAction, setAllAction] = useState([])
+  const [statAction, setStatAction] = useState([])
+
   const base_url = import.meta.env.VITE_API_URL || 'https://crmbackend-production-fdb8.up.railway.app';
 
   useEffect(() => {
@@ -43,7 +40,9 @@ export default function AnalyticsDashboard() {
         const createdAt = new Date(item.createdAt);
         return createdAt.getDate() === today.getDate() && createdAt.getMonth() === today.getMonth() && createdAt.getFullYear() === today.getFullYear();
       }).length);
+
       const customersPerMonth = Array(12).fill(0);
+
       response.data.data.forEach((item) => {
         const createdAt = new Date(item.createdAt);
         const month = createdAt.getMonth();
@@ -59,6 +58,37 @@ export default function AnalyticsDashboard() {
       })));
     };
 
+    const fetchLog = async () => {
+      try {
+        const response = await api.get(`/api/audit/logs?type=INTERACTION`)
+        const dataset = response.data.content
+        setActivities(response.data.content)
+        console.log("Activities Assigned: ", response.data.content)
+
+        const actionsPerMonth = Array(12).fill(0);
+
+        dataset.forEach((item) => {
+          const createAt = new Date(item.createdAt)
+          const month = createAt.getMonth()
+          actionsPerMonth[month]++
+        })
+        setAllAction(actionsPerMonth.map((item, index) => ({
+          month: new Date(1970, index).toLocaleString('default', { month: 'short' }),
+          count: item
+        })))
+
+        const statsAction = Object.groupBy(dataset, item => item.action)
+        const rollStats = Object.entries(statsAction).map(([action, items]) => ({
+          name: action,
+          value: items.length
+        }));
+        console.log(rollStats)
+        setStatAction(rollStats)
+      } catch (error) {
+        console.warn('There is something wrong')
+      }
+    }
+    fetchLog()
     fetchData();
   }, []);
 
@@ -187,7 +217,7 @@ export default function AnalyticsDashboard() {
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <AreaChart data={revenueData}>
+                  <AreaChart data={allAction}>
                     <defs>
                       <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
@@ -202,8 +232,7 @@ export default function AnalyticsDashboard() {
                     <XAxis dataKey="month" stroke="#9CA3AF" />
                     <YAxis stroke="#9CA3AF" />
                     <Tooltip />
-                    <Area type="monotone" dataKey="revenue" stroke="#3B82F6" fillOpacity={1} fill="url(#colorRevenue)" />
-                    <Area type="monotone" dataKey="expenses" stroke="#8B5CF6" fillOpacity={1} fill="url(#colorExpenses)" />
+                    <Area type="monotone" dataKey="count" stroke="#8B5CF6" fillOpacity={1} fill="url(#colorExpenses)" />
                   </AreaChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -218,7 +247,7 @@ export default function AnalyticsDashboard() {
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
                     <Pie
-                      data={categoryData}
+                      data={statAction}
                       cx="50%"
                       cy="50%"
                       innerRadius={60}
@@ -226,8 +255,8 @@ export default function AnalyticsDashboard() {
                       paddingAngle={5}
                       dataKey="value"
                     >
-                      {categoryData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      {statAction.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={categoryData[index].color} />
                       ))}
                     </Pie>
                     <Tooltip />
