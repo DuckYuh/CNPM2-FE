@@ -1,29 +1,33 @@
 import { useState, useEffect } from 'react'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
-import CustomerCard from '~/components/customers/CustomerCard'
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
+import UserCard from '~/components/users/UserCard'
+import AddUserForm from '~/components/users/AddUserForm'
 import {
   Filter,
   Plus,
   ChevronLeft,
   ChevronRight,
   SearchIcon,
-  ArrowRightIcon
+  ArrowRightIcon,
+  Users
 } from 'lucide-react'
-import { customerApi } from '~/apis/customerApi'
+import { userApi } from '~/apis'
 import { toast } from 'sonner'
-import { CustomerFormDialog } from '~/pages/customers/CustomerFormDialog'
 
-export default function CustomerListPage() {
+export default function UsersPage() {
+  // TODO: Replace with actual auth check when AuthContext is available
+  const hasRole = (role) => true // Temporary - allows all access
   const [activeTab, setActiveTab] = useState('List')
   const [currentPage, setCurrentPage] = useState(0) // API sử dụng 0-based indexing
   const [searchTerm, setSearchTerm] = useState('')
-  const [customers, setCustomers] = useState([])
-  const [totalCustomers, setTotalCustomers] = useState(0)
+  const [users, setUsers] = useState([])
+  const [totalUsers, setTotalUsers] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [loading, setLoading] = useState(false)
   const [countUpdate, setCountUpdate] = useState(0)
-  const [showAddDialog, setShowAddDialog] = useState(false)
+  const [openAddModal, setOpenAddModal] = useState(false)
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value)
@@ -33,12 +37,16 @@ export default function CustomerListPage() {
 
   useEffect(() => {
     setLoading(true)
-    customerApi
-      .getAll(currentPage)
+    userApi
+      .getAll(currentPage, pageSize)
       .then((response) => {
-        setCustomers(response.data)
-        setTotalCustomers(response.totalItems)
-        setTotalPages(response.totalPages)
+        setUsers(response.data || [])
+        setTotalUsers(response.totalItems || 0)
+        setTotalPages(response.totalPages || 0)
+      })
+      .catch((error) => {
+        toast.error('Failed to fetch users')
+        console.error('Error fetching users:', error)
       })
       .finally(() => {
         setLoading(false)
@@ -48,37 +56,105 @@ export default function CustomerListPage() {
   const handleSearch = async (event) => {
     event.preventDefault()
     setLoading(true)
-    customerApi
+    userApi
       .getAll(currentPage, pageSize, searchTerm)
       .then((response) => {
-        setCustomers(response.data)
-        setTotalCustomers(response.totalItems)
-        setTotalPages(response.totalPages)
+        setUsers(response.data || [])
+        setTotalUsers(response.totalItems || 0)
+        setTotalPages(response.totalPages || 0)
+      })
+      .catch((error) => {
+        toast.error('Failed to search users')
+        console.error('Error searching users:', error)
       })
       .finally(() => {
         setLoading(false)
       })
   }
 
-  const handleDeleteCustomer = async (customer) => {
+  const handleDeleteUser = async (user) => {
     setLoading(true)
+    const loadingToast = toast.loading('Deleting user...')
 
-    const loadingToast = toast.loading('Deleting customer...')
-    await customerApi.delete(customer.id)
-    // Refresh customer list after deletion
-    toast.success('Customer deleted successfully')
-    toast.dismiss(loadingToast)
+    try {
+      await userApi.delete(user.id)
+      toast.success('User deleted successfully')
+      toast.dismiss(loadingToast)
 
-    customerApi
-      .getAll(currentPage, pageSize, searchTerm)
-      .then((response) => {
-        setCustomers(response.data)
-        setTotalCustomers(response.totalItems)
-        setTotalPages(response.totalPages)
-      })
-      .finally(() => {
-        setLoading(false)
-      })
+      // Refresh user list after deletion
+      const response = await userApi.getAll(currentPage, pageSize, searchTerm)
+      setUsers(response.data || [])
+      setTotalUsers(response.totalItems || 0)
+      setTotalPages(response.totalPages || 0)
+    } catch (error) {
+      toast.error('Failed to delete user')
+      console.error('Error deleting user:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleDeactivateUser = async (user) => {
+    setLoading(true)
+    const loadingToast = toast.loading('Deactivating user...')
+
+    try {
+      await userApi.deactivate(user.id)
+      toast.success('User deactivated successfully')
+      toast.dismiss(loadingToast)
+
+      // Refresh user list
+      const response = await userApi.getAll(currentPage, pageSize, searchTerm)
+      setUsers(response.data || [])
+      setTotalUsers(response.totalItems || 0)
+      setTotalPages(response.totalPages || 0)
+    } catch (error) {
+      toast.error('Failed to deactivate user')
+      console.error('Error deactivating user:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleActivateUser = async (user) => {
+    setLoading(true)
+    const loadingToast = toast.loading('Activating user...')
+
+    try {
+      await userApi.activate(user.id)
+      toast.success('User activated successfully')
+      toast.dismiss(loadingToast)
+
+      // Refresh user list
+      const response = await userApi.getAll(currentPage, pageSize, searchTerm)
+      setUsers(response.data || [])
+      setTotalUsers(response.totalItems || 0)
+      setTotalPages(response.totalPages || 0)
+    } catch (error) {
+      toast.error('Failed to activate user')
+      .consoleerror('Error activating user:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Check if user has admin privileges
+  const canManageUsers = hasRole('admin') || hasRole('manager')
+
+  if (!canManageUsers) {
+    return (
+      <div className='min-h-screen flex items-center justify-center'>
+        <div className='text-center'>
+          <Users className='mx-auto h-12 w-12 text-muted-foreground mb-4' />
+          <h2 className='text-2xl font-semibold text-foreground mb-2'>
+            Access Denied
+          </h2>
+          <p className='text-muted-foreground'>
+            You don&apos;t have permission to manage users.
+          </p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -87,9 +163,10 @@ export default function CustomerListPage() {
       <div className='flex items-center justify-between mb-6'>
         <div className='flex items-center gap-4'>
           <h1 className='text-2xl font-semibold text-foreground'>
-            Customers ({totalCustomers})
+            Users ({totalUsers})
           </h1>
         </div>
+
         {/* Tab Navigation */}
         <div className='grid grid-cols-2 bg-gray-200 rounded-full p-1'>
           <Button
@@ -126,14 +203,26 @@ export default function CustomerListPage() {
           >
             <Filter className='h-4 w-4' />
           </Button>
-          <Button
-            size='sm'
-            className='flex items-center gap-2 bg-primary hover:bg-primary/90'
-            onClick={() => setShowAddDialog(true)}
-          >
-            <Plus className='h-4 w-4' />
-            Add Customer
-          </Button>
+
+          {hasRole('admin') && (
+            <Dialog open={openAddModal} onOpenChange={setOpenAddModal}>
+              <DialogTrigger asChild>
+                <Button
+                  size='sm'
+                  className='flex items-center gap-2 bg-primary hover:bg-primary/90'
+                >
+                  <Plus className='h-4 w-4' />
+                  Add User
+                </Button>
+              </DialogTrigger>
+              <DialogContent className='sm:max-w-[500px]'>
+                <AddUserForm
+                  setCountUpdate={setCountUpdate}
+                  closeModal={() => setOpenAddModal(false)}
+                />
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       </div>
 
@@ -141,7 +230,7 @@ export default function CustomerListPage() {
       <form onSubmit={handleSearch} className='relative w-[40%] mb-2'>
         <Input
           className='peer ps-9 pe-9 w-full placeholder:text-sm placeholder:text-mainColor1-100 rounded-lg border-mainColor1-800 text-mainColor1-600 hover:border-[2px] focus:border-[2px] flex-1 bg-white'
-          placeholder='Search customers...'
+          placeholder='Search users...'
           onChange={handleInputChange}
         />
         <div className='text-mainColor1-600/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50'>
@@ -156,32 +245,33 @@ export default function CustomerListPage() {
         </button>
       </form>
 
-      {/* Customer List */}
+      {/* User List */}
       <div className='bg-card rounded-lg border shadow-sm'>
         {/* Table Header */}
-        <div className='grid grid-cols-7 gap-4 p-4 border-b bg-muted/50 text-sm font-medium text-muted-foreground'>
-          <div className='col-span-2'>Customer Info</div>
+        <div className='grid grid-cols-8 gap-4 p-4 border-b bg-muted/50 text-sm font-medium text-muted-foreground'>
+          <div className='col-span-2'>User Info</div>
           <div>Phone</div>
-          <div>Address</div>
-          <div>Description</div>
+          <div>Role</div>
+          <div>Status</div>
+          <div>Last Login</div>
           <div>Created Date</div>
           <div></div>
         </div>
 
-        {/* Customer Rows */}
+        {/* User Rows */}
         {loading ? (
           <div className='w-full flex items-center justify-center h-96 text-muted-foreground'>
             Loading...
           </div>
         ) : (
           <div className='divide-y'>
-            {customers?.map((customer) => (
-              <CustomerCard
-                key={customer.id}
-                customer={customer}
-                onViewDetails={() => {}}
-                onDelete={handleDeleteCustomer}
-                countUpdate={countUpdate}
+            {users?.map((user) => (
+              <UserCard
+                key={user.id}
+                user={user}
+                onDelete={handleDeleteUser}
+                onDeactivate={handleDeactivateUser}
+                onActivate={handleActivateUser}
                 setCountUpdate={setCountUpdate}
               />
             ))}
@@ -189,11 +279,12 @@ export default function CustomerListPage() {
         )}
 
         {/* Empty State */}
-        {customers?.length === 0 && (
+        {users?.length === 0 && !loading && (
           <div className='flex flex-col items-center justify-center py-12'>
-            <div className='text-muted-foreground mb-2'>No customers found</div>
+            <Users className='h-12 w-12 text-muted-foreground mb-4' />
+            <div className='text-muted-foreground mb-2'>No users found</div>
             <div className='text-sm text-muted-foreground'>
-              Try adjusting your search terms
+              Try adjusting your search terms or add a new user
             </div>
           </div>
         )}
@@ -201,8 +292,8 @@ export default function CustomerListPage() {
         {/* Pagination */}
         <div className='flex items-center justify-between p-4 border-t bg-muted/50'>
           <div className='text-sm text-muted-foreground'>
-            Page {currentPage + 1} of {Math.max(totalPages, 1)} (
-            {totalCustomers} total)
+            Page {currentPage + 1} of {Math.max(totalPages, 1)} ({totalUsers}{' '}
+            total)
           </div>
           <div className='flex items-center gap-2'>
             <Button
@@ -231,14 +322,6 @@ export default function CustomerListPage() {
           </div>
         </div>
       </div>
-
-      <CustomerFormDialog
-        open={showAddDialog}
-        onOpenChange={setShowAddDialog}
-        onSuccess={() => {
-          setCountUpdate((prev) => prev + 1)
-        }}
-      />
     </div>
   )
 }
