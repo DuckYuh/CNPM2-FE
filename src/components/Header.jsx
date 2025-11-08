@@ -1,6 +1,24 @@
 import { Search, Bell, ChevronRight } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+
+const base_url = import.meta.env.VITE_API_URL || 'https://crmbackend-production-fdb8.up.railway.app';
 
 export default function Header({ userData }) {
+  const [user, setUser] = useState(null)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${base_url}/api/auth/getDetail/${userData.id}`)
+        console.log("User data: ",res.data)
+        setUser(res.data.data)
+      } catch (error) {
+        console.warn('There is something wrong')
+      }
+    }
+    fetchData()
+  },[])
+
   return (
     <header className='py-4 rounded-lg max-h-full mb-6'>
       <div className='flex items-center justify-between'>
@@ -18,7 +36,7 @@ export default function Header({ userData }) {
             </div>
             <div className='text-sm'>
               <div className='font-medium text-gray-900'>
-                {userData?.fullName || userData?.email || 'User'}
+                {user?.fullName || 'User'}
               </div>
             </div>
             <ChevronRight className='w-4 h-4 text-gray-400' />
