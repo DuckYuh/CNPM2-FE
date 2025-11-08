@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { customerApi } from '~/apis/customerApi'
 import { toast } from 'sonner'
+import { CustomerFormDialog } from '~/pages/customers/CustomerFormDialog'
 
 export default function CustomerListPage() {
   const [activeTab, setActiveTab] = useState('List')
@@ -22,6 +23,7 @@ export default function CustomerListPage() {
   const [totalPages, setTotalPages] = useState(0)
   const [loading, setLoading] = useState(false)
   const [countUpdate, setCountUpdate] = useState(0)
+  const [showAddDialog, setShowAddDialog] = useState(false)
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value)
@@ -127,6 +129,7 @@ export default function CustomerListPage() {
           <Button
             size='sm'
             className='flex items-center gap-2 bg-primary hover:bg-primary/90'
+            onClick={() => setShowAddDialog(true)}
           >
             <Plus className='h-4 w-4' />
             Add Customer
@@ -228,6 +231,14 @@ export default function CustomerListPage() {
           </div>
         </div>
       </div>
+
+      <CustomerFormDialog
+        open={showAddDialog}
+        onOpenChange={setShowAddDialog}
+        onSuccess={() => {
+          setCountUpdate((prev) => prev + 1)
+        }}
+      />
     </div>
   )
 }
