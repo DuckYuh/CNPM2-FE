@@ -9,7 +9,7 @@ export default function Header({ userData }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`${base_url}/api/auth/getDetail/${userData.email}`)
+        const res = await axios.get(`${base_url}/api/auth/getDetail/${userData.id}`)
         console.log("User data: ",res.data)
         setUser(res.data.data)
       } catch (error) {
