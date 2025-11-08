@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Filter, SearchIcon, ArrowRightIcon, Download } from 'lucide-react'
+import { Filter, SearchIcon, ArrowRightIcon, Download, Plus } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import {
@@ -11,6 +11,7 @@ import {
 } from "~/components/ui/select"
 import { format } from 'date-fns'
 import logApi from '~/apis/logApi'
+import FormData from '~/components/FormData'
 
 const AuditLog = () => {
   const [logs, setLogs] = useState([])
@@ -22,6 +23,7 @@ const AuditLog = () => {
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(20)
   const [total, setTotal] = useState(null)
+  const [open, setOpen] = useState(false)
 
   const buildQueryParams = () => {
     const params = {}
@@ -147,6 +149,7 @@ const AuditLog = () => {
 
   return (
     <div className='min-h-screen'>
+      <FormData open={open} setOpen={setOpen}/>
       {/* Header */}
       <div className='flex items-center justify-between mb-6'>
         <div className='flex items-center gap-4'>
@@ -155,6 +158,15 @@ const AuditLog = () => {
           </h1>
         </div>
         <div className='flex items-center gap-3'>
+          <Button
+            variant='outline'
+            size='sm'
+            className='flex items-center gap-2'
+            onClick={() => setOpen(true)}
+          >
+            <Plus className='h-4 w-4' />
+            Add Log
+          </Button>
           <Button
             variant='outline'
             size='sm'

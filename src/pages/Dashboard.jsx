@@ -25,6 +25,8 @@ export default function AnalyticsDashboard() {
   const [allAction, setAllAction] = useState([])
   const [statAction, setStatAction] = useState([])
 
+  const [num_staff, setNumStaff] = useState(0)
+
   const base_url = import.meta.env.VITE_API_URL || 'https://crmbackend-production-fdb8.up.railway.app';
 
   useEffect(() => {
@@ -96,19 +98,21 @@ export default function AnalyticsDashboard() {
         console.warn('There is something wrong')
       }
     }
+
+    const fetchStaff = async() => {
+      try {
+        const res = await axios.get(`${base_url}/api/users?isActive=true&size=200`)
+        console.log("Staff: ", res.data)
+        setNumStaff(res.data.totalItems)
+      } catch (error) {
+        console.warn('There is something wrong')
+      }
+    }
+
+    fetchStaff()
     fetchLog()
     fetchData();
   }, []);
-
-  const revenueData = [
-    { month: 'Jan', revenue: 4200, expenses: 2400 },
-    { month: 'Feb', revenue: 5100, expenses: 2800 },
-    { month: 'Mar', revenue: 4800, expenses: 2600 },
-    { month: 'Apr', revenue: 6200, expenses: 3200 },
-    { month: 'May', revenue: 7100, expenses: 3500 },
-    { month: 'Jun', revenue: 6800, expenses: 3300 },
-    { month: 'Jul', revenue: 8200, expenses: 3800 }
-  ]
 
   const categoryData = [
     { name: 'Electronics', value: 35, color: '#3B82F6' },
@@ -116,42 +120,6 @@ export default function AnalyticsDashboard() {
     { name: 'Food', value: 20, color: '#EC4899' },
     { name: 'Books', value: 12, color: '#10B981' },
     { name: 'Other', value: 8, color: '#F59E0B' }
-  ]
-
-  const trafficData = [
-    { hour: '00:00', visitors: 120 },
-    { hour: '04:00', visitors: 80 },
-    { hour: '08:00', visitors: 320 },
-    { hour: '12:00', visitors: 580 },
-    { hour: '16:00', visitors: 640 },
-    { hour: '20:00', visitors: 420 }
-  ]
-
-  const performanceData = [
-    { day: 'Mon', sales: 420 },
-    { day: 'Tue', sales: 680 },
-    { day: 'Wed', sales: 550 },
-    { day: 'Thu', sales: 780 },
-    { day: 'Fri', sales: 920 },
-    { day: 'Sat', sales: 1100 },
-    { day: 'Sun', sales: 850 }
-  ]
-
-  const topProducts = [
-    { name: 'Wireless Headphones', sales: 1234, change: 12.5, trend: 'up' },
-    { name: 'Smart Watch Pro', sales: 1089, change: 8.3, trend: 'up' },
-    { name: 'Laptop Stand', sales: 967, change: -3.2, trend: 'down' },
-    { name: 'Mechanical Keyboard', sales: 856, change: 15.7, trend: 'up' }
-  ]
-
-  const navItems = [
-    { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { id: 'projects', icon: FolderKanban, label: 'Projects' },
-    { id: 'calendar', icon: Calendar, label: 'Calendar' },
-    { id: 'vacations', icon: Plane, label: 'Vacations' },
-    { id: 'employees', icon: Users, label: 'Employees' },
-    { id: 'messenger', icon: MessageSquare, label: 'Messenger' },
-    { id: 'info', icon: Info, label: 'Info Portal' }
   ]
 
   const StatCard = ({ title, value, change, icon: Icon, trend }) => (
@@ -231,6 +199,15 @@ export default function AnalyticsDashboard() {
               }
               icon={ArrowUpRight}
               trend='up'
+            />
+            <StatCard
+              title='Staffs'
+              value={num_staff}
+              change={
+                0
+              }
+              icon={Users}
+              trend='none'
             />
           </div>
 
