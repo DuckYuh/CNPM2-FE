@@ -18,6 +18,7 @@ function Layout() {
     if (!token) {
       navigate('/login')
     } else {
+      navigate(`/${activeNav}`)
       // Fetch user data logic here if needed
       const decoded = jwtDecode(token)
       console.log('decoded:', decoded)

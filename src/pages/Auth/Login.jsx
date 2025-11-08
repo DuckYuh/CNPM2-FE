@@ -18,7 +18,7 @@ const Login = () => {
         e.preventDefault()
         setLoading(true)
         try {
-        const res = await api.post('/auth/login', formData)  // 🔹 gọi API từ Swagger
+        const res = await api.post('/auth/api/login', formData)  // 🔹 gọi API từ Swagger
         console.log('Login success:', res.data)
 
         // lưu token (nếu có)
