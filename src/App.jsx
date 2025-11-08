@@ -8,6 +8,7 @@ import Login from './pages/Auth/Login'
 import Register from './pages/Auth/Register'
 import ForgotPassword from './pages/Auth/ForgotPassword'
 import Dashboard from './pages/Dashboard'
+import AuditLog from './pages/Log/AuditLog'
 
 import ProtectedRoute from './utils/ProtectedRoute'
 
@@ -27,6 +28,7 @@ function App() {
         <Route path='customers' element={<CustomerListPage />} />
         <Route path='customers/:id' element={<CustomerProfilePage />} />
         <Route path='users' element={<UsersPage />} />
+        <Route path='logs' element={<AuditLog />} />
       </Route>
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
