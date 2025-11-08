@@ -43,12 +43,10 @@ const formatDate = (dateString) => {
 }
 
 const getRoleBadgeVariant = (role) => {
-  switch (role?.toLowerCase()) {
-    case 'admin':
+  switch (role?.toUpperCase()) {
+    case 'ADMIN':
       return 'destructive'
-    case 'manager':
-      return 'default'
-    case 'user':
+    case 'STAFF':
       return 'secondary'
     default:
       return 'outline'
@@ -84,7 +82,7 @@ export default function UserCard({
   const userStatus = user.status || (isActive ? 'active' : 'inactive')
 
   return (
-    <div className='grid grid-cols-8 gap-4 p-4 items-center hover:bg-muted/50 transition-colors'>
+    <div className='grid grid-cols-7 gap-4 p-4 items-center hover:bg-muted/50 transition-colors'>
       {/* User Info */}
       <div className='col-span-2 flex items-center gap-3'>
         <Avatar className='h-10 w-10'>
@@ -107,13 +105,10 @@ export default function UserCard({
         </div>
       </div>
 
-      {/* Phone */}
-      <div className='text-sm text-foreground'>{user.phone || 'N/A'}</div>
-
       {/* Role */}
       <div className='flex'>
-        <Badge variant={getRoleBadgeVariant(user.role)} className='text-xs'>
-          {user.role || 'User'}
+        <Badge variant={getRoleBadgeVariant(user.roles)} className='text-xs'>
+          {user?.roles || 'N/A'}
         </Badge>
       </div>
 
@@ -126,7 +121,7 @@ export default function UserCard({
 
       {/* Last Login */}
       <div className='text-sm text-foreground'>
-        {user.lastLoginAt ? formatDate(user.lastLoginAt) : 'Never'}
+        {user.lastLogin ? formatDate(user.lastLogin) : 'Never'}
       </div>
 
       {/* Created Date */}

@@ -13,7 +13,7 @@ export const userApi = {
       params.append('keyword', keyword)
     }
 
-    const response = await authorizedAxiosInstance.get(`/users/all?${params}`)
+    const response = await authorizedAxiosInstance.get(`/users?${params}`)
     return response.data
   },
 
