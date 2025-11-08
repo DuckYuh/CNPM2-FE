@@ -123,7 +123,7 @@ function NoteForm({ note, customerId, onSuccess, onCancel }) {
     setIsSubmitting(true)
     try {
       if (note) {
-        await notesApi.update({ id: note.id, ...data })
+        await notesApi.update(note.id, data)
         toast.success('Note updated successfully')
       } else {
         await notesApi.create({ customerId, ...data })
@@ -188,6 +188,8 @@ export default function CustomerProfilePage() {
 
   const { id } = useParams()
   const notesPageSize = 5
+
+  console.log(notes);
 
   useEffect(() => {
     const fetchCustomer = async () => {
@@ -261,7 +263,7 @@ export default function CustomerProfilePage() {
       notesPage,
       notesPageSize
     )
-    setNotes(response.data)
+    setNotes(response.content)
     setTotalNotes(response.totalItems)
     setTotalNotesPages(response.totalPages)
   }
@@ -285,7 +287,7 @@ export default function CustomerProfilePage() {
   return (
     <div className='max-w-7xl mx-auto p-6'>
       {/* Header */}
-      <div className='mb-6'>
+      <div className='mb-6 min-w-7xl'>
         <div className='flex items-center gap-2 mb-2'>
           <Button variant='ghost' size='sm' className='p-0'>
             <ChevronLeft className='h-4 w-4' />
@@ -299,7 +301,9 @@ export default function CustomerProfilePage() {
         </p>
       </div>
 
-      <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+      <div className='h-2'></div>
+
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
         {/* Left Panel - Customer Info */}
         <div className='lg:col-span-1'>
           <Card>

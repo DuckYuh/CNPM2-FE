@@ -1,4 +1,5 @@
 import authorizedAxiosInstance from '~/utils/authorizedAxios'
+import { jwtDecode } from 'jwt-decode'
 
 // Notes APIs
 export const notesApi = {
@@ -11,16 +12,19 @@ export const notesApi = {
     })
 
     const response = await authorizedAxiosInstance.get(
-      `/customer-notes/?${params}`
+      `/customer-notes?${params}`
     )
-    return response.data
+    return response.data.data
   },
 
   // Create new note
   create: async (noteData) => {
+    const token = localStorage.getItem('token')
+    const payload = jwtDecode(token)
+    const userId = payload.sub
     const response = await authorizedAxiosInstance.post(
       '/customer-notes/create',
-      noteData
+      { ...noteData, userId }
     )
     return response.data
   },
@@ -31,7 +35,7 @@ export const notesApi = {
       `/customer-notes/update/${noteId}`,
       noteData
     )
-    return response.data
+    return response.data.data
   },
 
   // Delete note

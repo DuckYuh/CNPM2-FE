@@ -10,28 +10,31 @@ import ForgotPassword from './pages/Auth/ForgotPassword'
 import Dashboard from './pages/Dashboard'
 
 import ProtectedRoute from './utils/ProtectedRoute'
+import { AuthProvider } from './context/AuthContext'
 
 function App() {
   return (
-    <Routes>
-      <Route
-        path='/'
-        element={
-          <ProtectedRoute>
-            {' '}
-            <Layout />{' '}
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Dashboard />} />
-        <Route path='customers' element={<CustomerListPage />} />
-        <Route path='customers/:id' element={<CustomerProfilePage />} />
-        <Route path='users' element={<UsersPage />} />
-      </Route>
-      <Route path='/login' element={<Login />} />
-      <Route path='/register' element={<Register />} />
-      <Route path='/forgot-password' element={<ForgotPassword />} />
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route
+          path='/'
+          element={
+            <ProtectedRoute>
+              {' '}
+              <Layout />{' '}
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Dashboard />} />
+          <Route path='customers' element={<CustomerListPage />} />
+          <Route path='customers/:id' element={<CustomerProfilePage />} />
+          <Route path='users' element={<UsersPage />} />
+        </Route>
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+        <Route path='/forgot-password' element={<ForgotPassword />} />
+      </Routes>
+    </AuthProvider>
   )
 }
 
