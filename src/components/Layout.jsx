@@ -26,7 +26,7 @@ function Layout() {
       <SideBar activeNav={activeNav} setActiveNav={setActiveNav} />
 
       {/* Main content - Flexible width */}
-      <main className='pl-80 flex-1 flex flex-col overflow-hidden'>
+      <main className='pl-80 flex-1 flex flex-col overflow-hidden bg-mainColor1-500'>
         <Header userData={user} />
         <div className='flex-1 overflow-auto p-6'>
           <Outlet />
