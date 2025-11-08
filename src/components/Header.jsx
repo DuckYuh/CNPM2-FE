@@ -1,14 +1,15 @@
 import { Search, Bell, ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import api from '~/apis/axios'
+
+const base_url = import.meta.env.VITE_API_URL || 'https://crmbackend-production-fdb8.up.railway.app';
 
 export default function Header({ userData }) {
   const [user, setUser] = useState(null)
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await api.get(`api/auth/getDetail/${userData.email}`)
+        const res = await axios.get(`${base_url}/api/auth/getDetail/${userData.email}`)
         console.log("User data: ",res.data)
         setUser(res.data.data)
       } catch (error) {

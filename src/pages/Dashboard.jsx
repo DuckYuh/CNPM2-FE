@@ -175,13 +175,13 @@ export default function AnalyticsDashboard() {
                 ) : (
                   <ArrowDownRight className='w-4 h-4' />
                 )}
-                {Math.abs(change)}%
+                {Math.round(Math.abs(change))}%
               </div>
             </>
           )}
         </div>
         <h3 className='text-sm font-medium text-gray-500 mb-1'>{title}</h3>
-        <p className='text-2xl font-bold text-gray-900'>{value}</p>
+        <p className='text-2xl font-bold text-gray-900'>{value ? Math.round(value) : 0}</p>
       </CardContent>
     </Card>
   )
