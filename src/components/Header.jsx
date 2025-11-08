@@ -5,14 +5,7 @@ export default function Header({ userData }) {
     <header className='py-4 rounded-lg max-h-full mb-6'>
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-4 flex-1 max-w-md'>
-          <div className='relative flex-1'>
-            <Search className='w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400' />
-            <input
-              type='text'
-              placeholder='Search'
-              className='w-full pl-10 pr-4 py-2 bg-white border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
-            />
-          </div>
+          <div className='relative flex-1'></div>
         </div>
 
         <div className='flex items-center gap-4'>
@@ -25,7 +18,7 @@ export default function Header({ userData }) {
             </div>
             <div className='text-sm'>
               <div className='font-medium text-gray-900'>
-                {userData?.fullname || userData?.email || 'User'}
+                {userData?.fullName || userData?.email || 'User'}
               </div>
             </div>
             <ChevronRight className='w-4 h-4 text-gray-400' />

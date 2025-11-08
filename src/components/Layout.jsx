@@ -1,37 +1,36 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Header from './Header'
 import SideBar from './SideBar'
 import { Outlet } from 'react-router-dom'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { jwtDecode } from 'jwt-decode'
+import { useLocation } from 'react-router-dom'
+import { useAuth } from '~/context/AuthContext'
 
 function Layout() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const location = useLocation()
-  console.log('Current location:', location.pathname)
   const [activeNav, setActiveNav] = useState(
     location.pathname.split('/')[1] || 'dashboard'
   )
-  const [userData, setUserData] = useState(null)
-  const navigate = useNavigate()
+  const { user, loading } = useAuth()
 
-  useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token) {
-      navigate('/login')
-    } else {
-      // Fetch user data logic here if needed
-      const decoded = jwtDecode(token)
-      setUserData(decoded) // Placeholder
-    }
-  }, [])
+  if (loading) {
+    return (
+      <div className='flex items-center justify-center min-h-screen'>
+        <div className='text-muted-foreground'>Loading...</div>
+      </div>
+    )
+  }
 
   return (
-    <div className='w-full pl-80 bg-blue-200 relative p-6 m-0 '>
+    <div className='flex h-screen overflow-hidden bg-background'>
+      {/* Sidebar - Fixed width */}
       <SideBar activeNav={activeNav} setActiveNav={setActiveNav} />
-      <main className='col-span-5 bg-blue-200'>
-        <Header userData={userData} />
-        <Outlet />
+
+      {/* Main content - Flexible width */}
+      <main className='pl-80 flex-1 flex flex-col overflow-hidden'>
+        <Header userData={user} />
+        <div className='flex-1 overflow-auto p-6'>
+          <Outlet />
+        </div>
       </main>
     </div>
   )

@@ -1,42 +1,29 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Input } from '~/components/ui/input'
 import { Button } from '~/components/ui/button'
 import { Label } from '~/components/ui/label'
 import { Card } from '~/components/ui/card'
 import { Link, useNavigate } from 'react-router-dom'
-import authorizedAxiosInstance from '~/utils/authorizedAxios'
+import { useAuth } from '~/context/AuthContext'
 
 const Login = () => {
   const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
+  const { login, loading, isAuthenticated } = useAuth()
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   })
 
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/')
+    }
+  }, [isAuthenticated, navigate])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setLoading(true)
-
-    try {
-      const res = await authorizedAxiosInstance.post('/auth/login', formData)
-      console.log('Login success:', res.data)
-
-      const { accessToken, refreshToken } = res.data?.data || {}
-
-      if (accessToken) {
-        localStorage.setItem('token', accessToken)
-        localStorage.setItem('refreshToken', refreshToken)
-        navigate('/')
-      } else {
-        alert('Login failed: No token received.')
-      }
-    } catch (err) {
-      console.error(err)
-      alert('Login failed! Please check your credentials.')
-    } finally {
-      setLoading(false)
-    }
+    await login(formData)
   }
 
   return (
@@ -118,8 +105,12 @@ const Login = () => {
               </Link>
             </div>
 
-            <Button type='submit' className='w-full bg-mainColor1-500'>
-              Sign in
+            <Button 
+              type='submit' 
+              className='w-full bg-mainColor1-500'
+              disabled={loading}
+            >
+              {loading ? 'Signing in...' : 'Sign in'}
             </Button>
 
             <p className='text-center text-sm text-muted-foreground'>
