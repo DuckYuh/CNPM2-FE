@@ -163,7 +163,7 @@ export default function UserCard({
 
             <DropdownMenuSeparator />
 
-            {/* Activation/Deactivation */}
+            {/* Activation/Deactivation
             {isActive ? (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -203,7 +203,7 @@ export default function UserCard({
                 <UserCheck className='h-4 w-4' />
                 Activate
               </DropdownMenuItem>
-            )}
+            )} */}
 
             {/* Delete */}
             <AlertDialog>

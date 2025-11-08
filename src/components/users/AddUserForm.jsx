@@ -11,18 +11,15 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Button } from '~/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '~/components/ui/select'
 import { toast } from 'sonner'
 import { userApi } from '~/apis'
-import { useState, useEffect } from 'react'
 
 const formSchema = Joi.object({
+  username: Joi.string().min(3).max(30).required().messages({
+    'string.empty': 'Username is required',
+    'string.min': 'Username must be at least 3 characters',
+    'string.max': 'Username must be at most 30 characters'
+  }),
   fullname: Joi.string().min(2).max(50).required().messages({
     'string.empty': 'Full name is required',
     'string.min': 'Full name must be at least 2 characters',
@@ -43,56 +40,33 @@ const formSchema = Joi.object({
   confirmPassword: Joi.string().valid(Joi.ref('password')).required().messages({
     'string.empty': 'Confirm password is required',
     'any.only': 'Passwords do not match'
-  }),
-  phone: Joi.string()
-    .pattern(/^[0-9]{10,15}$/)
-    .allow('')
-    .messages({
-      'string.pattern.base': 'Phone number must be between 10 and 15 digits'
-    }),
-  role: Joi.string().valid('admin', 'manager', 'user').required().messages({
-    'string.empty': 'Role is required',
-    'any.only': 'Role must be admin, manager, or user'
   })
 })
 
-const ROLES = [
-  { value: 'user', label: 'User' },
-  { value: 'manager', label: 'Manager' },
-  { value: 'admin', label: 'Admin' }
-]
-
 export default function AddUserForm({ setCountUpdate, closeModal }) {
-  const [selectedRole, setSelectedRole] = useState('user')
-
   const form = useForm({
     resolver: joiResolver(formSchema),
     defaultValues: {
+      username: '',
       fullname: '',
       email: '',
       password: '',
-      confirmPassword: '',
-      phone: '',
-      role: 'user'
+      confirmPassword: ''
     }
   })
 
-  const { register, handleSubmit, formState, setValue } = form
+  const { register, handleSubmit, formState } = form
   const { errors, isSubmitting } = formState
-
-  useEffect(() => {
-    setValue('role', selectedRole)
-  }, [selectedRole, setValue])
 
   const onSubmit = async (data) => {
     const toastId = toast.loading('Creating user...')
     try {
       const userData = {
+        username: data.username,
         fullname: data.fullname,
         email: data.email,
         password: data.password,
-        phone: data.phone,
-        role: data.role
+        role: 'STAFF'
       }
 
       const res = await userApi.create(userData)
@@ -127,6 +101,19 @@ export default function AddUserForm({ setCountUpdate, closeModal }) {
       </DialogHeader>
 
       <div className='grid gap-4'>
+        <div className='grid gap-2'>
+          <Label htmlFor='username'>Username</Label>
+          <Input
+            id='username'
+            {...register('username')}
+            aria-invalid={errors.username ? 'true' : 'false'}
+            placeholder='Enter username'
+          />
+          {errors.username && (
+            <p className='text-sm text-red-600'>{errors.username.message}</p>
+          )}
+        </div>
+
         <div className='grid gap-2'>
           <Label htmlFor='fullname'>Full Name</Label>
           <Input
@@ -181,39 +168,6 @@ export default function AddUserForm({ setCountUpdate, closeModal }) {
             <p className='text-sm text-red-600'>
               {errors.confirmPassword.message}
             </p>
-          )}
-        </div>
-
-        <div className='grid gap-2'>
-          <Label htmlFor='phone'>Phone</Label>
-          <Input
-            id='phone'
-            type='tel'
-            {...register('phone')}
-            aria-invalid={errors.phone ? 'true' : 'false'}
-            placeholder='Enter phone number (optional)'
-          />
-          {errors.phone && (
-            <p className='text-sm text-red-600'>{errors.phone.message}</p>
-          )}
-        </div>
-
-        <div className='grid gap-2'>
-          <Label htmlFor='role'>Role</Label>
-          <Select value={selectedRole} onValueChange={setSelectedRole}>
-            <SelectTrigger>
-              <SelectValue placeholder='Select role' />
-            </SelectTrigger>
-            <SelectContent>
-              {ROLES.map((role) => (
-                <SelectItem key={role.value} value={role.value}>
-                  {role.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors.role && (
-            <p className='text-sm text-red-600'>{errors.role.message}</p>
           )}
         </div>
       </div>
