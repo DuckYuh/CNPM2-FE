@@ -132,7 +132,7 @@ function NoteForm({ note, customerId, onSuccess, onCancel }) {
       reset()
       onSuccess()
     } catch (error) {
-      toast.error('Failed to save note')
+      toast.error(error.response.data.message)
     } finally {
       setIsSubmitting(false)
     }
@@ -250,7 +250,6 @@ export default function CustomerProfilePage() {
       setTotalNotes(response.totalItems)
       setTotalNotesPages(response.totalPages)
     } catch (error) {
-      console.log(error);
       toast.error(`${error.response.data.message}`)
     }
   }
