@@ -101,18 +101,7 @@ const Login = () => {
               />
             </div>
 
-            <div className='flex items-center justify-between text-sm'>
-              <label className='flex items-center gap-2'>
-                <input type='checkbox' className='rounded border-gray-300' />
-                <span>Remember me</span>
-              </label>
-              <Link
-                to='/forgot-password'
-                className='text-primary hover:underline'
-              >
-                Forgot password?
-              </Link>
-            </div>
+            
 
             <Button 
               type='submit' 
@@ -122,12 +111,7 @@ const Login = () => {
               {loading ? 'Signing in...' : 'Sign in'}
             </Button>
 
-            <p className='text-center text-sm text-muted-foreground'>
-              Don&apos;t have an account?{' '}
-              <Link to='/register' className='text-primary hover:underline'>
-                Sign up
-              </Link>
-            </p>
+            
           </form>
         </Card>
       </div>

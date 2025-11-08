@@ -91,7 +91,7 @@ export default function CustomerListPage() {
           </h1>
         </div>
         {/* Tab Navigation */}
-        <div className='grid grid-cols-2 bg-gray-200 rounded-full p-1'>
+        {/* <div className='grid grid-cols-2 bg-gray-200 rounded-full p-1'>
           <Button
             variant={activeTab === 'List' ? 'default' : 'ghost'}
             size='sm'
@@ -116,16 +116,10 @@ export default function CustomerListPage() {
           >
             Activity
           </Button>
-        </div>
+        </div> */}
 
         <div className='flex items-center gap-3'>
-          <Button
-            variant='outline'
-            size='sm'
-            className='flex items-center gap-2'
-          >
-            <Filter className='h-4 w-4' />
-          </Button>
+          
           <Button
             size='sm'
             className='flex items-center gap-2 bg-primary hover:bg-primary/90'
