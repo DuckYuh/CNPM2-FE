@@ -21,12 +21,12 @@ function Layout() {
   }
 
   return (
-    <div className='flex h-screen overflow-hidden bg-background'>
+    <div className='flex h-screen overflow-hidden bg-background bg-blue-200'>
       {/* Sidebar - Fixed width */}
       <SideBar activeNav={activeNav} setActiveNav={setActiveNav} />
 
       {/* Main content - Flexible width */}
-      <main className='pl-80 flex-1 flex flex-col overflow-hidden bg-mainColor1-500'>
+      <main className='pl-80 flex-1 flex flex-col overflow-hidden bg-mainColor1-200'>
         <Header userData={user} />
         <div className='flex-1 overflow-auto p-6'>
           <Outlet />
