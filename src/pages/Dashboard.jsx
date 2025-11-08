@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import axios from 'axios';
-import api from '~/apis/axios';
 
 export default function AnalyticsDashboard() {
   const [customers, setCustomers] = useState([]);
@@ -69,7 +68,7 @@ export default function AnalyticsDashboard() {
 
     const fetchLog = async () => {
       try {
-        const response = await api.get(`/api/audit/logs?type=INTERACTION`)
+        const response = await axios.get(`${base_url}/api/audit/logs?type=INTERACTION`)
         const dataset = response.data.content
         setActivities(response.data.content)
         console.log("Activities Assigned: ", response.data.content)
