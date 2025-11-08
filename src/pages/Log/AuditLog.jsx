@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "~/components/ui/select"
 import { format } from 'date-fns'
-import api from '~/apis/axios'
+import logApi from '~/apis/logApi'
 
 const AuditLog = () => {
     const [logs, setLogs] = useState([])
@@ -38,35 +38,24 @@ const AuditLog = () => {
         setLoading(true)
         try {
             const params = buildQueryParams()
-            const res = await api.get('/api/audit/logs', { params })
+            const res = await logApi.getAuditLogs(params)
 
-            // API returns a pageable object with content array and pagination fields
-            const payload = res.data?.data ?? res.data ?? {}
-            // If API returned actual array directly in res.data, handle that too:
-            const items =
-                Array.isArray(payload) ? payload :
-                Array.isArray(res.data?.content) ? res.data.content :
-                Array.isArray(payload.content) ? payload.content :
-                Array.isArray(payload.items) ? payload.items :
-                []
-
-            // Extract total / page info from known fields
-            const totalElements = payload.totalElements ?? res.data?.totalElements ?? payload.total ?? res.data?.totalElements ?? null
-            const pageNumber = payload.number ?? res.data?.number ?? page
-            const pageSize = payload.size ?? res.data?.size ?? size
-
-            setLogs(items)
-            setTotal(totalElements)
-            setPage(Number(pageNumber))
-            setSize(Number(pageSize))
+            // Handle the response data structure
+            if (res?.data) {
+                const { content, totalElements, number, size } = res.data
+                setLogs(content || [])
+                setTotal(totalElements)
+                setPage(number)
+                setSize(size)
+            }
         } catch (err) {
-            console.error('Failed to load audit logs', err)
+            console.error('Failed to load audit logs:', err)
             setLogs([])
             setTotal(null)
         } finally {
             setLoading(false)
         }
-    }
+        }
 
     useEffect(() => {
         fetchLogs()
