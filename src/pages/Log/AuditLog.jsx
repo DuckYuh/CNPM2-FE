@@ -135,16 +135,14 @@ const AuditLog = () => {
     return s.trim()
   }
 
-  // client-side filtered list (searchTerm matches username, userId, action, description)
+  // client-side filtered list: word-by-word search against username only
   const filteredLogs = logs.filter(log => {
-    const kw = (searchTerm || '').trim().toLowerCase()
-    if (!kw) return true
-    return (
-      String(log.username || '').toLowerCase().includes(kw) ||
-      String(log.userId || '').toLowerCase().includes(kw) ||
-      String(log.action || '').toLowerCase().includes(kw) ||
-      String(log.description || '').toLowerCase().includes(kw)
-    )
+    const raw = (searchTerm || '').trim().toLowerCase()
+    if (!raw) return true
+    // split into words and require every word to appear in username (AND match)
+    const words = raw.split(/\s+/).filter(Boolean)
+    const username = String(log.username || log.userId || '').toLowerCase()
+    return words.every(w => username.includes(w))
   })
 
   return (
@@ -212,6 +210,25 @@ const AuditLog = () => {
         </div>
       )}
 
+      {/* Search Input */}
+      <form onSubmit={handleSearch} className='relative w-[40%] mb-4'>
+        <Input
+          className='peer ps-9 pe-9 w-full placeholder:text-sm placeholder:text-mainColor1-100 rounded-lg border-mainColor1-800 text-mainColor1-600 hover:border-[2px] focus:border-[2px] flex-1 bg-white'
+          placeholder='Search by username'
+          value={searchTerm}
+          onChange={handleInputChange}
+        />
+        <div className='text-mainColor1-600/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50'>
+          <SearchIcon size={16} />
+        </div>
+        <button
+          className='text-mainColor1-600/80 hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50'
+          aria-label='Submit search'
+          type='submit'
+        >
+          <ArrowRightIcon size={16} aria-hidden='true' />
+        </button>
+      </form>
 
       {/* Logs Table */}
       <div className='bg-card rounded-lg border shadow-sm'>
